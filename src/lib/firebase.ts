@@ -2,8 +2,9 @@ import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
+// Der API-Schlüssel wird jetzt sicher aus einer Umgebungsvariable geladen
 const firebaseConfig = {
-  apiKey: "AIzaSyDK-LdwrMXJqiq3BC13v2Uh6ii5YXSUhcM",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY, // ✅ SICHER
   authDomain: "silberbach-community-hub-t4zya.firebaseapp.com",
   projectId: "silberbach-community-hub-t4zya",
   storageBucket: "silberbach-community-hub-t4zya.appspot.com",
