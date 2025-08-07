@@ -12,14 +12,14 @@ import dynamic from "next/dynamic";
 import React from "react";
 import { BackButton } from "@/components/back-button";
 import { ListChecks } from "lucide-react";
+import MeetingPlannerPanel from "@/components/board/meeting-planner-panel";
+import ProtocolViewer from "@/components/board/protocol-viewer";
 
 // Dynamischer Import der Client-Komponente mit deaktiviertem SSR
 const MeetingBoard = dynamic(
   () => import("@/components/board/meeting-board-client"),
   { 
-    ssr: false,
-    // Optional: Eine Lade-Komponente anzeigen, während das Board geladen wird
-    loading: () => <p>Lade Board...</p> 
+    ssr: false
   }
 );
 
@@ -37,21 +37,39 @@ export default function BoardMeetingsPage() {
                 Versammlungen planen (Drag & Drop)
             </h1>
             <p className="mt-2 text-muted-foreground">
-                Organisieren Sie die Tagesordnungspunkte per Drag & Drop.
+                Planen Sie Versammlungen und organisieren Sie die Tagesordnungspunkte per Drag & Drop.
             </p>
         </div>
-        <Card className="max-w-2xl mx-auto">
-        <CardHeader>
-            <CardTitle>Tagesordnungspunkte</CardTitle>
-            <CardDescription>
-            Ordnen Sie die Themen für die nächste Beiratssitzung.
-            </CardDescription>
-        </CardHeader>
-        <CardContent>
-            {/* <MeetingBoard /> */}
-            <p>Test: Seite lädt ohne Board-Komponente.</p>
-        </CardContent>
-        </Card>
+
+        {/* Three-column layout */}
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+          {/* Left column - Meeting Planning */}
+          <div className="xl:col-span-3">
+            <MeetingPlannerPanel />
+          </div>
+
+          {/* Middle column - Agenda Management */}
+          <div className="xl:col-span-6">
+            <Card className="w-full">
+              <CardHeader>
+                  <CardTitle>Tagesordnungspunkte</CardTitle>
+                  <CardDescription>
+                  Ordnen Sie die Themen für die nächste Versammlung.
+                  </CardDescription>
+              </CardHeader>
+              <CardContent>
+                  <div className="space-y-2">
+                      <MeetingBoard />
+                  </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right column - Protocol Viewer */}
+          <div className="xl:col-span-3">
+            <ProtocolViewer />
+          </div>
+        </div>
     </div>
   );
 }

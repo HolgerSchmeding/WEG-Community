@@ -27,6 +27,13 @@ const managementAreas = [
     iconBg: "bg-blue-500"
   },
   { 
+    title: "Versammlungen planen", 
+    description: "Tagesordnungspunkte per Drag & Drop organisieren",
+    href: "/board/meetings",
+    icon: Calendar,
+    iconBg: "bg-purple-500"
+  },
+  { 
     title: "Dokumente verwalten", 
     description: "Wichtige Dokumente hochladen und organisieren",
     href: "/documents/archive",
@@ -166,7 +173,7 @@ export default function BoardPage() {
       {/* Management Areas */}
       <div>
         <h2 className="text-2xl font-bold font-headline mb-6">Verwaltungsbereiche</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
             {managementAreas.map((area) => (
                 <Link href={area.href} key={area.title}>
                     <Card className="bg-white flex flex-col h-full hover:shadow-lg hover:-translate-y-1 transition-all">

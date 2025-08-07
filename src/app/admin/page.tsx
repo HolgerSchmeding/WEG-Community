@@ -4,7 +4,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Users, Megaphone, HelpCircle, Store, FileText, Calendar, ListChecks, BotIcon, ArrowUpRight, ArrowRight } from "lucide-react";
+import { Users, Megaphone, HelpCircle, Store, FileText, Calendar, ListChecks, BotIcon, ArrowUpRight, ArrowRight, ClipboardList } from "lucide-react";
 import Link from 'next/link';
 
 const overviewStats = [
@@ -48,6 +48,14 @@ const managementFunctions = [
     href: "/admin/users"
   },
   {
+    title: "Ticket erstellen (Außendienst)",
+    description: "Als Hausverwalter vor Ort Tickets für Reparaturen/Wartungen erfassen",
+    icon: ClipboardList,
+    bgColor: "bg-blue-100",
+    iconColor: "text-blue-600",
+    href: "/admin/tickets/new"
+  },
+  {
     title: "Anfragen verwalten",
     description: "Anfragen von Bewohnern einsehen und bearbeiten",
     icon: HelpCircle,
@@ -86,6 +94,14 @@ const managementFunctions = [
     bgColor: "bg-cyan-100",
     iconColor: "text-cyan-600",
     href: "/board/meetings"
+  },
+  {
+    title: "Live-Protokollierung",
+    description: "Eigentümerversammlung digital protokollieren mit KI-Unterstützung",
+    icon: FileText,
+    bgColor: "bg-indigo-100",
+    iconColor: "text-indigo-600",
+    href: "/admin/live-protocol"
   },
 ];
 

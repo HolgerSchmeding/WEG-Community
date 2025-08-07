@@ -8,12 +8,14 @@ import { db } from "@/lib/firebase"; // Unsere neue Firebase-DB-Verbindung
 import { collection, getDocs, orderBy, query, Timestamp } from "firebase/firestore";
 import { BackButton } from "@/components/back-button";
 import { Megaphone, AlertTriangle, PlusCircle } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Building, UserSquare } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { LoadingState } from "@/components/ui/loading-state";
+import { NoAnnouncements } from "@/components/ui/empty-state";
 
 
 // Wir definieren einen Typ für unsere Aushänge, inkl. der ID
@@ -29,6 +31,7 @@ export default function AnnouncementsPage() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { canCreateAnnouncements, user, isLoading: authLoading } = useAuth();
 
   useEffect(() => {
     // Diese Funktion lädt die Daten aus Firestore
@@ -80,23 +83,31 @@ export default function AnnouncementsPage() {
         <p className="mt-2 text-muted-foreground">
           Hier finden Sie alle aktuellen Mitteilungen der Hausverwaltung oder des Verwaltungsbeirats.
         </p>
+        
+        {/* Anzeige der aktuellen Benutzerrolle (nur in der Entwicklung) */}
+        {process.env.NODE_ENV === 'development' && user && (
+          <div className="mt-4 p-2 bg-blue-50 text-blue-700 text-sm rounded">
+            Demo-Benutzer: {user.name} | Rollen: {user.roles.join(', ')} 
+            {canCreateAnnouncements() && ' | ✅ Kann Aushänge erstellen'}
+          </div>
+        )}
       </div>
       
-      <div className="flex justify-end max-w-3xl mx-auto mb-4">
-        <Button asChild>
-            <Link href="/admin/announcements/new">
-                <PlusCircle className="mr-2 h-4 w-4" />
-                Neuer Aushang
-            </Link>
-        </Button>
-      </div>
+      {/* Button nur für Admin und Beirat anzeigen */}
+      {canCreateAnnouncements() && (
+        <div className="flex justify-end max-w-3xl mx-auto mb-4">
+          <Button asChild>
+              <Link href="/admin/announcements/new">
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  Neuer Aushang
+              </Link>
+          </Button>
+        </div>
+      )}
 
       <div className="max-w-3xl mx-auto mt-12 space-y-6">
         {loading ? (
-          <div className="space-y-6">
-            <Skeleton className="h-40 w-full" />
-            <Skeleton className="h-40 w-full" />
-          </div>
+          <LoadingState type="list" items={3} />
         ) : error ? (
              <Card>
                 <CardHeader>
@@ -112,7 +123,7 @@ export default function AnnouncementsPage() {
                    <p className="text-xs text-muted-foreground mt-4">Bitte überprüfen Sie, ob die Sammlung "announcements" in Firestore existiert, mindestens einen Eintrag enthält und die Firestore-Regeln den Lesezugriff erlauben.</p>
                 </CardContent>
               </Card>
-        ) : (
+        ) : announcements.length > 0 ? (
              announcements.map((item) => {
                 const AuthorIcon = getAuthorIcon(item.author);
                 return (
@@ -135,6 +146,10 @@ export default function AnnouncementsPage() {
                     </Card>
                 )
             })
+        ) : (
+            <NoAnnouncements 
+                onCreateNew={canCreateAnnouncements() ? () => window.location.href = '/admin/announcements/new' : undefined}
+            />
         )}
       </div>
     </div>

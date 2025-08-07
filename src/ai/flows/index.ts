@@ -7,3 +7,4 @@ import './document-summarization';
 import './appointment-subline-flow';
 import './board-assistant-flow';
 import './test-flow';
+import './agenda-item-improvement-flow';

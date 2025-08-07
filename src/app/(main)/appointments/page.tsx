@@ -8,8 +8,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Calendar as CalendarIcon, Building, UserCheck, GanttChartSquare, ChevronRight, Info } from "lucide-react";
 import { de } from 'date-fns/locale';
-import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { LoadingState } from "@/components/ui/loading-state";
+import { NoAppointments } from "@/components/ui/empty-state";
 
 const initialOwnerAppointments = [
   {
@@ -110,11 +111,7 @@ export default function AppointmentsPage() {
                     </CardHeader>
                     <CardContent>
                        {isLoading ? (
-                         <div className="space-y-4">
-                            <Skeleton className="h-24 w-full" />
-                            <Skeleton className="h-24 w-full" />
-                            <Skeleton className="h-24 w-full" />
-                         </div>
+                         <LoadingState type="list" items={3} />
                        ) : sortedAppointments.length > 0 ? (
                             <ul className="space-y-4">
                                 {sortedAppointments.map((item, index) => {
@@ -146,12 +143,7 @@ export default function AppointmentsPage() {
                                 )})}
                             </ul>
                         ) : (
-                            <div className="text-center py-12 text-muted-foreground">
-                                <div className="inline-block bg-muted p-4 rounded-lg mb-4">
-                                    <CalendarIcon className="h-8 w-8 text-muted-foreground" />
-                                </div>
-                                <p>Derzeit sind keine spezifischen Termine für Eigentümer geplant.</p>
-                            </div>
+                            <NoAppointments />
                         )}
                     </CardContent>
                 </Card>

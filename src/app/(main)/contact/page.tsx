@@ -13,49 +13,14 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { MoreHorizontal, Pencil, CheckCircle } from "lucide-react";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
-
-const allTickets = [
-  {
-    id: "T2024-07-001",
-    subject: "Frage zur Nebenkostenabrechnung",
-    requester: "Familie Mustermann",
-    date: "19. Juli 2024",
-    status: "Wartend",
-    reminderDate: new Date(2024, 7, 1),
-  },
-  {
-    id: "T2024-07-002",
-    subject: "Defekte Glühbirne im Treppenhaus (3. OG)",
-    requester: "Herr Schmidt",
-    date: "18. Juli 2024",
-    status: "Offen",
-    reminderDate: null,
-  },
-  {
-    id: "T2024-07-003",
-    subject: "Meldung: Wasserfleck an der Garagendecke",
-    requester: "Frau Meier",
-    date: "15. Juli 2024",
-    status: "Erledigt",
-    reminderDate: null,
-  },
-   {
-    id: "T2024-07-004",
-    subject: "Regenrinne verstopft",
-    requester: "Familie Huber",
-    date: "14. Juli 2024",
-    status: "Zur Erledigung",
-    reminderDate: new Date(2024, 6, 25),
-  },
-];
-
-// Simulate a logged-in user. In a real app, this would come from an auth context.
-const currentUser = "Herr Schmidt";
+import { useTickets } from "@/hooks/use-tickets";
+import { useAuth } from "@/hooks/use-auth";
 
 const getStatusBadgeVariant = (status: string) => {
     switch(status) {
         case "Erledigt": return "default";
         case "In Bearbeitung": return "secondary";
+        case "Erstellt": return "outline";
         case "Wartend":
         case "Zur Erledigung":
         case "Offen": return "destructive";
@@ -69,15 +34,34 @@ const getStatusBadgeClass = (status: string) => {
         case "Wartend": return "bg-orange-500 text-white";
         case "Zur Erledigung": return "bg-yellow-500 text-yellow-950";
         case "Offen": return "bg-red-500 text-white";
+        case "Erstellt": return "bg-gray-500 text-white";
         default: return "";
     }
 }
 
 
 export default function ContactManagementPage() {
-    // For admins/board, show all. For users, filter by their name.
-    // Here we simulate the user view.
-    const [requests, setRequests] = React.useState(allTickets.filter(ticket => ticket.requester === currentUser));
+    const { tickets, getUserTickets } = useTickets();
+    const { user } = useAuth();
+    
+    const currentUser = user?.fullName || "Unbekannter Benutzer";
+    
+    // Für Demo: Zeige alle Tickets des aktuellen Benutzers
+    const requests = getUserTickets(currentUser);
+    
+    // TEMPORÄRE LÖSUNG: Zeige auch neue Tickets, die gerade erstellt wurden
+    // Finde Tickets, die in den letzten 5 Minuten erstellt wurden
+    const recentTickets = tickets.filter(ticket => {
+      const now = new Date();
+      const ticketTime = new Date(ticket.createdAt);
+      const timeDiff = now.getTime() - ticketTime.getTime();
+      return timeDiff < 5 * 60 * 1000; // 5 Minuten
+    });
+    
+    // Kombiniere bestehende Requests mit neuen Tickets
+    const allUserTickets = [...requests, ...recentTickets.filter(
+      ticket => !requests.some(req => req.id === ticket.id)
+    )];
 
   return (
     <div className="container py-8">
@@ -116,20 +100,49 @@ export default function ContactManagementPage() {
                         <TableHead>Betreff</TableHead>
                         <TableHead>Erstellt</TableHead>
                         <TableHead>Status</TableHead>
+                        <TableHead>Objekt/Eigentümer</TableHead>
                         <TableHead>Frist / Wiedervorlage</TableHead>
                         <TableHead className="text-right">Aktionen</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {requests.map((req) => (
+                    {allUserTickets.map((req) => (
                         <TableRow key={req.id}>
                             <TableCell className="font-mono text-xs">{req.id}</TableCell>
-                            <TableCell className="font-medium">{req.subject}</TableCell>
+                            <TableCell className="font-medium">
+                                <div className="flex items-center gap-2">
+                                    <span>{req.subject}</span>
+                                    {req.createdByRole === 'hausverwalter' && (
+                                        <Badge variant="secondary" className="text-xs">
+                                            Außendienst
+                                        </Badge>
+                                    )}
+                                </div>
+                            </TableCell>
                             <TableCell>{req.date}</TableCell>
                             <TableCell>
                                 <Badge variant={"outline"} className={getStatusBadgeClass(req.status)}>
                                     {req.status}
                                 </Badge>
+                            </TableCell>
+                            <TableCell>
+                                {req.createdByRole === 'hausverwalter' ? (
+                                    <div className="text-xs">
+                                        <div className="font-medium">{req.house || '-'}</div>
+                                        <div className="text-muted-foreground">
+                                            {req.street || '-'}, {req.city || '-'}
+                                        </div>
+                                        {req.ownerName && (
+                                            <div className="text-muted-foreground italic">
+                                                → {req.ownerName}
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div className="text-xs text-muted-foreground">
+                                        Kundenanfrage
+                                    </div>
+                                )}
                             </TableCell>
                             <TableCell>
                                 {req.reminderDate && (
@@ -161,7 +174,7 @@ export default function ContactManagementPage() {
                     ))}
                 </TableBody>
             </Table>
-             {requests.length === 0 && (
+             {allUserTickets.length === 0 && (
                 <div className="text-center py-16 text-muted-foreground">
                     <Mail className="mx-auto h-12 w-12 mb-4" />
                     <p>Sie haben noch keine Anfragen gestellt.</p>

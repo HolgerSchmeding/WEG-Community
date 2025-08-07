@@ -5,7 +5,7 @@ import * as React from "react";
 import { BackButton } from "@/components/back-button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import Image from "next/image";
-import { Store, Gift, Handshake, Calendar, User, ShoppingCart, MessageSquareQuote, PlusCircle, Paperclip, Mail as MailIcon, Phone, FileType } from "lucide-react";
+import { Store, Gift, Handshake, Calendar, User, MessageSquareQuote, PlusCircle, Paperclip, Mail as MailIcon, Phone, FileType } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,7 +14,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Skeleton } from "@/components/ui/skeleton";
+import { LoadingState, ButtonLoadingState } from "@/components/ui/loading-state";
+import { NoMarketplaceItems } from "@/components/ui/empty-state";
 
 const initialMarketplaceItems = [
   {
@@ -77,6 +78,7 @@ export default function MarketplacePage() {
     
     const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
     const [fileName, setFileName] = React.useState("Keine Datei ausgewählt");
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
     
     React.useEffect(() => {
         setIsLoading(true);
@@ -126,35 +128,40 @@ export default function MarketplacePage() {
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        setIsSubmitting(true);
         
-        const newItem = {
-            type: itemType,
-            title: title,
-            author: author,
-            date: new Date().toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' }),
-            price: offerType === 'geschenk' ? 'Zu verschenken' : 'Gegen Angebot',
-            image: selectedFile ? URL.createObjectURL(selectedFile) : 'https://placehold.co/600x400.png',
-            imageHint: "new offer",
-            description: description,
-        };
+        // Simulate API call
+        setTimeout(() => {
+            const newItem = {
+                type: itemType,
+                title: title,
+                author: author,
+                date: new Date().toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' }),
+                price: offerType === 'geschenk' ? 'Zu verschenken' : 'Gegen Angebot',
+                image: selectedFile ? URL.createObjectURL(selectedFile) : 'https://placehold.co/600x400.png',
+                imageHint: "new offer",
+                description: description,
+            };
 
-        setItems(prevItems => [newItem, ...prevItems]);
+            setItems(prevItems => [newItem, ...prevItems]);
 
-        // Reset form
-        setItemType("Gegenstand");
-        setTitle("");
-        setAuthor("");
-        setEmail("");
-        setPhone("");
-        setOfferType("geschenk");
-        setDescription("");
-        setSelectedFile(null);
-        setFileName("Keine Datei ausgewählt");
+            // Reset form
+            setItemType("Gegenstand");
+            setTitle("");
+            setAuthor("");
+            setEmail("");
+            setPhone("");
+            setOfferType("geschenk");
+            setDescription("");
+            setSelectedFile(null);
+            setFileName("Keine Datei ausgewählt");
+            setIsSubmitting(false);
 
-        toast({
-            title: "Angebot veröffentlicht!",
-            description: "Ihr Angebot ist jetzt auf dem Marktplatz sichtbar.",
-        });
+            toast({
+                title: "Angebot veröffentlicht!",
+                description: "Ihr Angebot ist jetzt auf dem Marktplatz sichtbar.",
+            });
+        }, 1500);
     };
 
     return (
@@ -262,9 +269,18 @@ export default function MarketplacePage() {
                                 </div>
                                 </div>
                                 <div className="text-right">
-                                    <Button type="submit">
-                                        <PlusCircle className="mr-2 h-4 w-4" />
-                                        Angebot veröffentlichen
+                                    <Button type="submit" disabled={isSubmitting}>
+                                        {isSubmitting ? (
+                                            <>
+                                                <ButtonLoadingState size="sm" />
+                                                <span className="ml-2">Wird veröffentlicht...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <PlusCircle className="mr-2 h-4 w-4" />
+                                                Angebot veröffentlichen
+                                            </>
+                                        )}
                                     </Button>
                                 </div>
                             </form>
@@ -282,10 +298,7 @@ export default function MarketplacePage() {
                         </CardHeader>
                         <CardContent>
                              {isLoading ? (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-2"><Skeleton className="h-48 w-full" /><Skeleton className="h-10 w-3/4" /><Skeleton className="h-20 w-full" /></div>
-                                    <div className="space-y-2"><Skeleton className="h-48 w-full" /><Skeleton className="h-10 w-3/4" /><Skeleton className="h-20 w-full" /></div>
-                                </div>
+                                <LoadingState type="cards" items={4} />
                              ) : items.length > 0 ? (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {items.map((item, index) => {
@@ -333,10 +346,7 @@ export default function MarketplacePage() {
                                 )})}
                                 </div>
                              ) : (
-                                <div className="md:col-span-2 text-center py-12 text-muted-foreground">
-                                    <ShoppingCart className="mx-auto h-12 w-12 mb-4" />
-                                    <p>Derzeit gibt es keine Angebote auf dem Marktplatz.</p>
-                                </div>
+                                <NoMarketplaceItems />
                             )}
                         </CardContent>
                     </Card>
