@@ -15,7 +15,6 @@ import { useAuth } from "@/hooks/use-auth";
 import { useTickets } from "@/hooks/use-tickets";
 import { useFormValidation, validationSchemas } from "@/hooks/use-form-validation";
 import { FormErrorBoundary } from "@/components/error-boundary";
-import { ContactCategory } from "@/lib/types";
 import {
   Dialog,
   DialogContent,
@@ -39,7 +38,7 @@ const contactFormSchema = z.object({
   contactStatus: z.enum(["resident", "owner"], { 
     required_error: "Bitte wählen Sie Ihren Status aus" 
   }),
-  attachments: z.array(z.instanceof(File)).optional(),
+  attachments: z.array(z.any()).optional(),
 });
 
 type ContactFormData = z.infer<typeof contactFormSchema>;
@@ -145,7 +144,7 @@ export default function NewContactPage() {
   });
 
   // Handle contact status change
-  const handleContactStatusChange = (status: "resident" | "owner") => {
+  const handleContactStatusChange = (status: ContactStatus) => {
     setValue("contactStatus", status);
     if (status === "resident") {
       setShowResidentDialog(true);

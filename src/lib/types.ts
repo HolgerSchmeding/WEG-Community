@@ -14,9 +14,30 @@ export type UserRole = "admin" | "resident" | "owner" | "board" | "hausverwalter
 export type AppointmentStatus = "Entwurf" | "Anstehend" | "Vergangen";
 export type AnnouncementStatus = "Aktiv" | "Entwurf" | "Abgelaufen";
 export type TicketStatus = "Erstellt" | "In Bearbeitung" | "Warten auf Antwort" | "Erledigt" | "Storniert";
-export type DocumentCategory = "protocol" | "annual" | "correspondence" | "legal";
+export type DocumentCategory = "protocol" | "annual" | "correspondence" | "legal" | "current-bill";
 export type MarketplaceOfferType = "geschenk" | "verkauf" | "gesuch";
 export type ContactCategory = "maintenance" | "billing" | "general" | "complaint" | "emergency";
+
+// Billing Types
+export interface CurrentBill {
+  id: string;
+  title: string;
+  description: string;
+  amount: number;
+  billingPeriod: {
+    from: Date;
+    to: Date;
+  };
+  dueDate: Date;
+  assignedToUserId: string; // Spezifischer Benutzer
+  assignedToUserName: string; // Display Name
+  uploadDate: Date;
+  uploadedBy: string;
+  fileUrl?: string;
+  content: string; // Für Suche und Zusammenfassung
+  status: "Neu" | "Eingesehen" | "Archiviert";
+  notificationSent: boolean;
+}
 
 // Meeting Planning Types
 export type MeetingType = "Eigentümerversammlung" | "Beiratssitzung" | "Sonder-Eigentümerversammlung";

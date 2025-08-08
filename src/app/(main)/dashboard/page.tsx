@@ -27,7 +27,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 const initialAppointments = [
   {
-    date: new Date(2024, 6, 28).toISOString(),
+    date: new Date(2025, 7, 28).toISOString(), // 28. August 2025
     title: "Grünschnitt-Sammlung",
     author: "Hausverwaltung",
     type: "Offiziell",
@@ -35,7 +35,7 @@ const initialAppointments = [
     subline: "Entsorgung von Gartenabfällen."
   },
   {
-    date: new Date(2024, 7, 3).toISOString(),
+    date: new Date(2025, 8, 3).toISOString(), // 3. September 2025
     title: "Einladung zum Parkfest",
     author: "WEG-Verwaltungsbeirat",
     type: "Gemeinschaft",
@@ -43,7 +43,15 @@ const initialAppointments = [
     subline: "Gemütliches Beisammensein für alle Nachbarn."
   },
   {
-    date: new Date(2024, 7, 10).toISOString(),
+    date: new Date(2025, 8, 15).toISOString(), // 15. September 2025
+    title: "Hausversammlung - Jahresabschluss 2024",
+    author: "Hausverwaltung",
+    type: "Offiziell", 
+    description: "Wichtige Versammlung zur Besprechung des Jahresabschlusses 2024 und Planung für 2025. Alle Eigentümer sind herzlich eingeladen.",
+    subline: "Pflichttermin für alle Eigentümer."
+  },
+  {
+    date: new Date(2025, 9, 10).toISOString(), // 10. Oktober 2025
     title: "Geburtstagsfeier Familie Schmidt (Whg. 12)",
     author: "Familie Schmidt",
     type: "Private Info",
@@ -77,21 +85,18 @@ export default function DashboardPage() {
   React.useEffect(() => {
     setIsLoading(true);
     try {
-        const storedAppointments = localStorage.getItem("appointments");
-        if (storedAppointments) {
-            setUpcomingAppointments(JSON.parse(storedAppointments)
-                .filter((a: Appointment) => new Date(a.date) >= new Date())
-                .sort((a: Appointment, b: Appointment) => new Date(a.date).getTime() - new Date(b.date).getTime())
-                .slice(0, 3));
-        } else {
-            setUpcomingAppointments(initialAppointments
-                .filter((a: Appointment) => new Date(a.date) >= new Date())
-                .sort((a: Appointment, b: Appointment) => new Date(a.date).getTime() - new Date(b.date).getTime())
-                .slice(0, 3));
-            localStorage.setItem("appointments", JSON.stringify(initialAppointments));
-        }
+        // Immer die aktuellen Termine aus initialAppointments verwenden
+        // und in localStorage für andere Seiten speichern
+        localStorage.setItem("appointments", JSON.stringify(initialAppointments));
+        
+        const currentAppointments = initialAppointments
+            .filter((a: Appointment) => new Date(a.date) >= new Date())
+            .sort((a: Appointment, b: Appointment) => new Date(a.date).getTime() - new Date(b.date).getTime())
+            .slice(0, 3);
+            
+        setUpcomingAppointments(currentAppointments);
     } catch (error) {
-        console.error("Could not load appointments from localStorage", error);
+        console.error("Could not load appointments", error);
         setUpcomingAppointments(initialAppointments
             .filter((a: Appointment) => new Date(a.date) >= new Date())
             .sort((a: Appointment, b: Appointment) => new Date(a.date).getTime() - new Date(b.date).getTime())

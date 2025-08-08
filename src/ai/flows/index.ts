@@ -4,6 +4,7 @@
  * This should only be imported by application entry points (e.g., API routes, dev server).
  */
 import './document-summarization';
+import './document-search';
 import './appointment-subline-flow';
 import './board-assistant-flow';
 import './test-flow';

@@ -12,10 +12,10 @@ import { de } from 'date-fns/locale';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const stats = [
-  { title: "BENUTZER", value: "6", description: "von 6 gesamt", icon: Users, color: "text-blue-500" },
-  { title: "AUSHÄNGE", value: "1", description: "aktive Mitteilungen", icon: MessageSquare, color: "text-green-500" },
-  { title: "KONTAKTE", value: "1", description: "unbearbeitet", icon: AlertCircle, color: "text-red-500" },
-  { title: "DOKUMENTE", value: "2", description: "gesamt", icon: FileText, color: "text-purple-500" }
+  { title: "AUSHÄNGE", value: "3", description: "aktive Mitteilungen", icon: MessageSquare, color: "text-blue-500" },
+  { title: "KONTAKTANFRAGEN", value: "7", description: "noch unbearbeitet", icon: Mail, color: "text-red-500" },
+  { title: "NEUE DOKUMENTE", value: "5", description: "diese Woche", icon: FileText, color: "text-green-500" },
+  { title: "GEPLANTE VERSAMMLUNGEN", value: "2", description: "nächste 3 Monate", icon: Calendar, color: "text-purple-500" }
 ];
 
 const managementAreas = [
@@ -59,7 +59,7 @@ const managementAreas = [
 
 const residentAppointments = [
   {
-    date: new Date(2024, 6, 28).toISOString(),
+    date: new Date(2025, 7, 28).toISOString(), // 28. August 2025
     title: "Grünschnitt-Sammlung",
     author: "Hausverwaltung",
     type: "Offiziell",
@@ -67,7 +67,7 @@ const residentAppointments = [
     subline: "Entsorgung von Gartenabfällen."
   },
   {
-    date: new Date(2024, 7, 3).toISOString(),
+    date: new Date(2025, 8, 3).toISOString(), // 3. September 2025
     title: "Einladung zum Parkfest",
     author: "WEG-Verwaltungsbeirat",
     type: "Gemeinschaft",
@@ -78,23 +78,23 @@ const residentAppointments = [
 
 const ownerAppointments = [
   {
-    date: new Date(2024, 8, 15).toISOString(), 
-    title: "Ordentliche Eigentümerversammlung 2024",
+    date: new Date(2025, 8, 15).toISOString(), // 15. September 2025
+    title: "Ordentliche Eigentümerversammlung 2025",
     author: "Hausverwaltung",
     type: "Versammlung",
     description: "Die jährliche Eigentümerversammlung findet im Gemeinschaftsraum statt. Die offizielle Einladung mit Tagesordnung wurde fristgerecht versendet.",
     subline: "Jährliches Treffen aller Eigentümer."
   },
   {
-    date: new Date(2024, 10, 5).toISOString(), 
-    title: "Beiratssitzung Q4/2024",
+    date: new Date(2025, 9, 5).toISOString(), // 5. Oktober 2025
+    title: "Beiratssitzung Q4/2025",
     author: "WEG-Verwaltungsbeirat",
     type: "Beiratssitzung",
-    description: "Der Verwaltungsbeirat bespricht die anstehenden Themen für das vierte Quartal, inkl. Budgetplanung 2025.",
+    description: "Der Verwaltungsbeirat bespricht die anstehenden Themen für das vierte Quartal, inkl. Budgetplanung 2026.",
     subline: "Interne Sitzung des Verwaltungsbeirats."
   },
   {
-    date: new Date(2024, 6, 30).toISOString(), 
+    date: new Date(2025, 8, 30).toISOString(), // 30. September 2025
     title: "Begehung mit dem Dachdecker",
     author: "Hausverwaltung",
     type: "Sonstiges",
@@ -130,16 +130,55 @@ export default function BoardPage() {
   const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
-    // In a real app, this data would come from a database
-    const futureAppointments = combinedAppointments
-        .filter((a) => new Date(a.date) >= new Date())
+    // Direkte Termine für Demo - sicherheitshalber
+    const demoAppointments = [
+      {
+        date: new Date(2025, 7, 28).toISOString(), // 28. August 2025
+        title: "Grünschnitt-Sammlung",
+        author: "Hausverwaltung",
+        type: "Offiziell",
+        description: "Bitte legen Sie Ihren Grünschnitt bis 07:00 Uhr morgens an der Sammelstelle bereit.",
+        subline: "Entsorgung von Gartenabfällen."
+      },
+      {
+        date: new Date(2025, 8, 3).toISOString(), // 3. September 2025
+        title: "Einladung zum Parkfest",
+        author: "WEG-Verwaltungsbeirat",
+        type: "Gemeinschaft",
+        description: "Wir laden alle Bewohnerinnen und Bewohner herzlich zum diesjährigen Parkfest auf der Festwiese ein.",
+        subline: "Gemütliches Beisammensein für alle Nachbarn."
+      },
+      {
+        date: new Date(2025, 8, 15).toISOString(), // 15. September 2025
+        title: "Ordentliche Eigentümerversammlung 2025",
+        author: "Hausverwaltung",
+        type: "Versammlung",
+        description: "Die jährliche Eigentümerversammlung findet im Gemeinschaftsraum statt.",
+        subline: "Jährliches Treffen aller Eigentümer."
+      },
+      {
+        date: new Date(2025, 9, 5).toISOString(), // 5. Oktober 2025
+        title: "Beiratssitzung Q4/2025",
+        author: "WEG-Verwaltungsbeirat",
+        type: "Beiratssitzung",
+        description: "Der Verwaltungsbeirat bespricht die anstehenden Themen für das vierte Quartal.",
+        subline: "Interne Sitzung des Verwaltungsbeirats."
+      }
+    ];
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const futureAppointments = demoAppointments
+        .filter((a) => new Date(a.date) >= today)
         .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-    setUpcomingAppointments(futureAppointments.slice(0, 4));
+    
+    setUpcomingAppointments(futureAppointments);
     setIsLoading(false);
   }, []);
 
   return (
-    <div className="container py-8 bg-slate-50">
+    <div className="container py-8">
 
       <div className="flex justify-between items-center mb-8">
         <Button variant="ghost" asChild>
@@ -149,9 +188,22 @@ export default function BoardPage() {
           </Link>
         </Button>
         <Badge variant="outline" className="text-base py-2 px-4 border-2">
-            <Users className="mr-2 h-5 w-5" />
+            <UserCheck className="mr-2 h-5 w-5" />
             WEG-Beirat
         </Badge>
+      </div>
+
+      {/* Header Sektion - neu hinzugefügt für Konsistenz */}
+      <div className="text-center max-w-2xl mx-auto my-8">
+        <div className="inline-block bg-primary/20 p-3 rounded-lg mb-4">
+            <UserCheck className="h-8 w-8 text-primary" />
+        </div>
+        <h1 className="font-headline text-4xl md:text-5xl font-bold tracking-tight">
+            Verwaltungsbeirats-Cockpit
+        </h1>
+        <p className="mt-4 text-lg text-muted-foreground">
+            Alle wichtigen Verwaltungsaufgaben und Termine der Bewohner & Eigentümer im Blick behalten.
+        </p>
       </div>
 
       {/* Stat Cards */}

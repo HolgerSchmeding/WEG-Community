@@ -4,8 +4,6 @@
 import React, { useState, useEffect } from "react";
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { db } from "@/lib/firebase"; // Unsere neue Firebase-DB-Verbindung
-import { collection, getDocs, orderBy, query, Timestamp } from "firebase/firestore";
 import { BackButton } from "@/components/back-button";
 import { Megaphone, AlertTriangle, PlusCircle } from "lucide-react";
 import { format } from 'date-fns';
@@ -17,13 +15,37 @@ import { useAuth } from "@/hooks/use-auth";
 import { LoadingState } from "@/components/ui/loading-state";
 import { NoAnnouncements } from "@/components/ui/empty-state";
 
+// Mock-Daten für Aushänge - mit sicheren Zeitstempeln
+const mockAnnouncements = [
+  {
+    id: "1",
+    title: "Hausordnung - Reminder für alle Bewohner",
+    content: "Liebe Bewohner,\n\nbitte beachten Sie die folgenden Punkte unserer Hausordnung:\n\n• Nachtruhe von 22:00 - 06:00 Uhr\n• Mülltonnen nur am Abholtag bereitstellen\n• Fahräder nur in den dafür vorgesehenen Bereichen abstellen\n• Hausflure und Treppenhäuser freihalten\n\nVielen Dank für Ihr Verständnis!\n\nIhre Hausverwaltung",
+    createdAt: "2025-08-05T10:00:00.000Z",
+    author: "Hausverwaltung"
+  },
+  {
+    id: "2", 
+    title: "Ankündigung: Herbstputz im September",
+    content: "Sehr geehrte Eigentümer und Mieter,\n\nhiermit informieren wir Sie über den geplanten Herbstputz:\n\n📅 Zeitraum: 10. - 14. September 2025\n🕐 Arbeitszeiten: 08:00 - 16:00 Uhr\n\nBitte beachten Sie:\n• Fenster sollten geschlossen bleiben\n• Balkon-/Terrassenmöbel nach Möglichkeit abräumen\n• Parkplätze vor dem Gebäude ggf. kurzzeitig gesperrt\n\nBei Fragen wenden Sie sich gerne an die Hausverwaltung.\n\nMit freundlichen Grüßen\nIhr Verwaltungsbeirat",
+    createdAt: "2025-08-03T14:30:00.000Z",
+    author: "Verwaltungsbeirat"
+  },
+  {
+    id: "3",
+    title: "Einladung zur Eigentümerversammlung 2025", 
+    content: "Sehr geehrte Damen und Herren,\n\nhiermit laden wir Sie herzlich zur jährlichen Eigentümerversammlung ein:\n\n📅 Datum: 15. September 2025\n🕕 Uhrzeit: 18:00 Uhr\n📍 Ort: Gemeinschaftsraum im Erdgeschoss\n\nTagesordnung:\n1. Bericht der Hausverwaltung\n2. Jahresabrechnung 2024\n3. Wirtschaftsplan 2026\n4. Instandhaltungsmaßnahmen\n5. Verschiedenes\n\nDie vollständigen Unterlagen erhalten Sie separat per Post.\n\nWir freuen uns auf Ihr Erscheinen!\n\nIhre Hausverwaltung Schmidt & Partner",
+    createdAt: "2025-08-01T16:00:00.000Z",
+    author: "Hausverwaltung"
+  }
+];
 
 // Wir definieren einen Typ für unsere Aushänge, inkl. der ID
 interface Announcement {
   id: string;
   title: string;
   content: string;
-  createdAt: Timestamp;
+  createdAt: string;
   author: string;
 }
 
@@ -34,26 +56,18 @@ export default function AnnouncementsPage() {
   const { canCreateAnnouncements, user, isLoading: authLoading } = useAuth();
 
   useEffect(() => {
-    // Diese Funktion lädt die Daten aus Firestore
+    // Mock-Daten laden (simuliert Firebase-Aufruf)
     const fetchAnnouncements = async () => {
       try {
-        // Wir erstellen eine Anfrage, die die Aushänge nach Erstellungsdatum sortiert
-        const announcementsQuery = query(collection(db, "announcements"), orderBy("createdAt", "desc"));
-        const querySnapshot = await getDocs(announcementsQuery);
-
-        if (querySnapshot.empty) {
-            setError("Es wurden keine Aushänge in der Datenbank gefunden.");
-        }
-
-        const fetchedAnnouncements = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          title: doc.data().title || "Ohne Titel",
-          content: doc.data().content || "Kein Inhalt",
-          createdAt: doc.data().createdAt,
-          author: doc.data().author || "Unbekannt",
-        })) as Announcement[];
-
-        setAnnouncements(fetchedAnnouncements);
+        // Simuliere Lade-Zeit
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Mock-Daten nach Datum sortieren (neueste zuerst)
+        const sortedAnnouncements = [...mockAnnouncements].sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        
+        setAnnouncements(sortedAnnouncements);
       } catch (error) {
         console.error("Fehler beim Laden der Aushänge: ", error);
         setError("Ein Fehler ist beim Laden der Aushänge aufgetreten. Bitte versuchen Sie es später erneut.");
@@ -132,7 +146,9 @@ export default function AnnouncementsPage() {
                             <div className="flex justify-between items-start">
                                 <div>
                                     <CardTitle className="font-headline text-xl mb-1">{item.title}</CardTitle>
-                                    <CardDescription>{format(new Date(item.createdAt.seconds * 1000), 'PPP', { locale: de })}</CardDescription>
+                                    <CardDescription>
+                                      {typeof window !== 'undefined' ? format(new Date(item.createdAt), 'PPP', { locale: de }) : new Date(item.createdAt).toLocaleDateString('de-DE')}
+                                    </CardDescription>
                                 </div>
                                 <Badge variant="outline" className="flex items-center gap-2">
                                    <AuthorIcon className="h-4 w-4" />

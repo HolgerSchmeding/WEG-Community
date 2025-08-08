@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 
 const initialResidentAppointments = [
   {
-    date: new Date(2024, 6, 28).toISOString(),
+    date: new Date(2025, 7, 28).toISOString(), // 28. August 2025
     title: "Grünschnitt-Sammlung",
     author: "Hausverwaltung",
     type: "Offiziell",
@@ -21,7 +21,7 @@ const initialResidentAppointments = [
     subline: "Entsorgung von Gartenabfällen."
   },
   {
-    date: new Date(2024, 7, 3).toISOString(),
+    date: new Date(2025, 8, 3).toISOString(), // 3. September 2025
     title: "Einladung zum Parkfest",
     author: "WEG-Verwaltungsbeirat",
     type: "Gemeinschaft",
@@ -29,7 +29,15 @@ const initialResidentAppointments = [
     subline: "Gemütliches Beisammensein für alle Nachbarn."
   },
   {
-    date: new Date(2024, 7, 10).toISOString(),
+    date: new Date(2025, 8, 15).toISOString(), // 15. September 2025
+    title: "Hausversammlung - Jahresabschluss 2024",
+    author: "Hausverwaltung",
+    type: "Offiziell", 
+    description: "Wichtige Versammlung zur Besprechung des Jahresabschlusses 2024 und Planung für 2025. Alle Eigentümer sind herzlich eingeladen.",
+    subline: "Pflichttermin für alle Eigentümer."
+  },
+  {
+    date: new Date(2025, 9, 10).toISOString(), // 10. Oktober 2025
     title: "Geburtstagsfeier Familie Schmidt (Whg. 12)",
     author: "Familie Schmidt",
     type: "Private Info",
