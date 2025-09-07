@@ -22,6 +22,26 @@ Migration von Firebase Hosting zu Vercel zur Behebung des "clientModules undefin
    - Output Directory: `.next` (Standard)
    - Install Command: `npm ci`
 
+### 1.1 Next.js 15 + Vercel Kompatibilitäts-Fix
+
+**Problem**: Next.js 15.3.3 mit Route Groups `(main)` erzeugt ENOENT-Fehler für fehlende `page_client-reference-manifest.js`.
+
+**Lösung**: Client-Reference-Shim implementiert:
+
+1. **Erstellt**: `src/components/_client-ref.tsx`
+   ```tsx
+   "use client"
+   import { useState } from 'react'
+   export default function ClientRef() {
+     const [_] = useState(null)
+     return null
+   }
+   ```
+
+2. **Integriert**: In `src/app/(main)/layout.tsx` und `src/app/(main)/page.tsx`
+   - Zwingt Next.js Client-Reference-Manifest-Generierung
+   - Behebt Vercel File-Tracing für Route Groups
+
 ### 2. Environment Variablen
 
 Gehe zu **Project Settings → Environment Variables** und füge folgende Variablen hinzu:
