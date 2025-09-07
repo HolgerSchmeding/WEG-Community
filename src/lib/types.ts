@@ -1,5 +1,5 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -10,13 +10,33 @@ export function cn(...inputs: ClassValue[]) {
 // ==============================================
 
 // Base Types
-export type UserRole = "admin" | "resident" | "owner" | "board" | "hausverwalter";
-export type AppointmentStatus = "Entwurf" | "Anstehend" | "Vergangen";
-export type AnnouncementStatus = "Aktiv" | "Entwurf" | "Abgelaufen";
-export type TicketStatus = "Erstellt" | "In Bearbeitung" | "Warten auf Antwort" | "Erledigt" | "Storniert";
-export type DocumentCategory = "protocol" | "annual" | "correspondence" | "legal" | "current-bill";
-export type MarketplaceOfferType = "geschenk" | "verkauf" | "gesuch";
-export type ContactCategory = "maintenance" | "billing" | "general" | "complaint" | "emergency";
+export type UserRole =
+  | 'admin'
+  | 'resident'
+  | 'owner'
+  | 'board'
+  | 'hausverwalter';
+export type AppointmentStatus = 'Entwurf' | 'Anstehend' | 'Vergangen';
+export type AnnouncementStatus = 'Aktiv' | 'Entwurf' | 'Abgelaufen';
+export type TicketStatus =
+  | 'Erstellt'
+  | 'In Bearbeitung'
+  | 'Warten auf Antwort'
+  | 'Erledigt'
+  | 'Storniert';
+export type DocumentCategory =
+  | 'protocol'
+  | 'annual'
+  | 'correspondence'
+  | 'legal'
+  | 'current-bill';
+export type MarketplaceOfferType = 'geschenk' | 'verkauf' | 'gesuch';
+export type ContactCategory =
+  | 'maintenance'
+  | 'billing'
+  | 'general'
+  | 'complaint'
+  | 'emergency';
 
 // Billing Types
 export interface CurrentBill {
@@ -35,14 +55,17 @@ export interface CurrentBill {
   uploadedBy: string;
   fileUrl?: string;
   content: string; // Für Suche und Zusammenfassung
-  status: "Neu" | "Eingesehen" | "Archiviert";
+  status: 'Neu' | 'Eingesehen' | 'Archiviert';
   notificationSent: boolean;
 }
 
 // Meeting Planning Types
-export type MeetingType = "Eigentümerversammlung" | "Beiratssitzung" | "Sonder-Eigentümerversammlung";
-export type MeetingStatus = "Entwurf" | "Planung" | "Genehmigt" | "Versendet";
-export type InviteeGroup = "Wohnungseigentümer" | "Beirat" | "Alle";
+export type MeetingType =
+  | 'Eigentümerversammlung'
+  | 'Beiratssitzung'
+  | 'Sonder-Eigentümerversammlung';
+export type MeetingStatus = 'Entwurf' | 'Planung' | 'Genehmigt' | 'Versendet';
+export type InviteeGroup = 'Wohnungseigentümer' | 'Beirat' | 'Alle';
 
 export interface MeetingEvent {
   id: string;
@@ -65,8 +88,16 @@ export interface MeetingEvent {
 }
 
 // Protocol Types
-export type ProtocolStatus = "Entwurf" | "Zur Prüfung" | "Genehmigt" | "Veröffentlicht";
-export type DecisionResult = "Angenommen" | "Abgelehnt" | "Vertagt" | "Keine Abstimmung";
+export type ProtocolStatus =
+  | 'Entwurf'
+  | 'Zur Prüfung'
+  | 'Genehmigt'
+  | 'Veröffentlicht';
+export type DecisionResult =
+  | 'Angenommen'
+  | 'Abgelehnt'
+  | 'Vertagt'
+  | 'Keine Abstimmung';
 
 export interface VotingResult {
   votesFor: number;
@@ -104,7 +135,7 @@ export interface LiveProtocolSession {
   totalVoters: number; // Anwesende Stimmberechtigte
   items: LiveProtocolItem[];
   currentTopIndex: number; // Aktuell behandelter TOP
-  status: "Vorbereitung" | "Laufend" | "Pausiert" | "Abgeschlossen";
+  status: 'Vorbereitung' | 'Laufend' | 'Pausiert' | 'Abgeschlossen';
   startTime?: Date;
   endTime?: Date;
 }
@@ -142,7 +173,7 @@ export interface MeetingProtocol {
 // User Types
 export interface User {
   id: string;
-  salutation: "Herr" | "Frau" | "Divers";
+  salutation: 'Herr' | 'Frau' | 'Divers';
   firstName: string;
   lastName: string;
   email: string;
@@ -153,7 +184,8 @@ export interface User {
   fullName?: string; // Computed property for display
 }
 
-export interface UserFormData extends Omit<User, 'id' | 'createdAt' | 'credentialsSent' | 'fullName'> {}
+export interface UserFormData
+  extends Omit<User, 'id' | 'createdAt' | 'credentialsSent' | 'fullName'> {}
 
 // Meeting & Appointment Types
 export interface Meeting {
@@ -181,7 +213,8 @@ export interface Appointment {
   duration?: number; // in minutes
 }
 
-export interface AppointmentFormData extends Omit<Appointment, 'id' | 'author'> {}
+export interface AppointmentFormData
+  extends Omit<Appointment, 'id' | 'author'> {}
 
 export interface AppointmentTypeDetails {
   label: string;
@@ -203,11 +236,12 @@ export interface Announcement {
   };
   createdAt: Date;
   expiresAt?: Date;
-  priority?: "low" | "medium" | "high";
+  priority?: 'low' | 'medium' | 'high';
   category?: string;
 }
 
-export interface AnnouncementFormData extends Omit<Announcement, 'id' | 'createdAt'> {}
+export interface AnnouncementFormData
+  extends Omit<Announcement, 'id' | 'createdAt'> {}
 
 // Document Types
 export interface Document {
@@ -222,7 +256,8 @@ export interface Document {
   downloadCount?: number;
 }
 
-export interface DocumentFormData extends Omit<Document, 'id' | 'downloadCount'> {}
+export interface DocumentFormData
+  extends Omit<Document, 'id' | 'downloadCount'> {}
 
 // Marketplace Types
 export interface MarketplaceItem {
@@ -239,10 +274,11 @@ export interface MarketplaceItem {
   imageUrl?: string;
   price?: string;
   location?: string;
-  condition?: "new" | "like-new" | "good" | "fair" | "poor";
+  condition?: 'new' | 'like-new' | 'good' | 'fair' | 'poor';
 }
 
-export interface MarketplaceFormData extends Omit<MarketplaceItem, 'id' | 'createdAt'> {}
+export interface MarketplaceFormData
+  extends Omit<MarketplaceItem, 'id' | 'createdAt'> {}
 
 // Ticket & Contact Types
 export interface TicketAttachment {
@@ -267,7 +303,7 @@ export interface Ticket {
   message: string;
   attachments: TicketAttachment[];
   responses?: TicketResponse[];
-  priority?: "low" | "medium" | "high";
+  priority?: 'low' | 'medium' | 'high';
   assignedTo?: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -291,7 +327,7 @@ export interface ContactFormData {
   subject: string;
   category: ContactCategory;
   message: string;
-  contactStatus: "resident" | "owner";
+  contactStatus: 'resident' | 'owner';
   attachments?: File[];
 }
 
@@ -357,7 +393,7 @@ export interface SearchFilters {
 
 export interface SortOptions {
   field: string;
-  direction: "asc" | "desc";
+  direction: 'asc' | 'desc';
 }
 
 // UI Component Types
@@ -386,7 +422,7 @@ export interface Permission {
   name: string;
   description: string;
   resource: string;
-  action: "create" | "read" | "update" | "delete";
+  action: 'create' | 'read' | 'update' | 'delete';
 }
 
 export interface RolePermissions {
@@ -395,7 +431,7 @@ export interface RolePermissions {
 }
 
 // Theme & UI Types
-export type ThemeMode = "light" | "dark" | "system";
+export type ThemeMode = 'light' | 'dark' | 'system';
 
 export interface UIPreferences {
   theme: ThemeMode;
@@ -416,7 +452,7 @@ export interface DashboardMetric {
   value: number | string;
   change?: {
     value: number;
-    direction: "up" | "down";
+    direction: 'up' | 'down';
     timeframe: string;
   };
   icon?: string;
@@ -457,7 +493,7 @@ export interface Notification {
   userId: string;
   title: string;
   message: string;
-  type: "info" | "success" | "warning" | "error";
+  type: 'info' | 'success' | 'warning' | 'error';
   isRead: boolean;
   createdAt: Date;
   actionUrl?: string;

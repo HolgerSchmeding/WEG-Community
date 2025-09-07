@@ -1,20 +1,44 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import { useRouter } from "next/navigation";
-import { BackButton } from "@/components/back-button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { SendHorizonal, Loader2, AlertCircle, Upload, X, FileText, Image as ImageIcon, Camera } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/use-auth";
-import { useTickets } from "@/hooks/use-tickets";
-import { useFormValidation, validationSchemas } from "@/hooks/use-form-validation";
-import { FormErrorBoundary } from "@/components/error-boundary";
+import * as React from 'react';
+import { useRouter } from 'next/navigation';
+import { BackButton } from '@/components/back-button';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  SendHorizonal,
+  Loader2,
+  AlertCircle,
+  Upload,
+  X,
+  FileText,
+  Image as ImageIcon,
+  Camera,
+} from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/use-auth';
+import { useTickets } from '@/hooks/use-tickets';
+import {
+  useFormValidation,
+  validationSchemas,
+} from '@/hooks/use-form-validation';
+import { FormErrorBoundary } from '@/components/error-boundary';
 import {
   Dialog,
   DialogContent,
@@ -22,52 +46,60 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { z } from "zod";
+} from '@/components/ui/dialog';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { z } from 'zod';
 
 // Form Schema Definition
 const contactFormSchema = z.object({
-  firstName: validationSchemas.required("Vorname ist erforderlich"),
-  lastName: validationSchemas.required("Nachname ist erforderlich"),
+  firstName: validationSchemas.required('Vorname ist erforderlich'),
+  lastName: validationSchemas.required('Nachname ist erforderlich'),
   email: validationSchemas.email,
-  phone: validationSchemas.phone.optional().or(z.literal("")),
-  subject: validationSchemas.required("Betreff ist erforderlich"),
-  category: validationSchemas.required("Kategorie ist erforderlich"),
-  message: validationSchemas.minLength(10, "Nachricht muss mindestens 10 Zeichen lang sein"),
-  contactStatus: z.enum(["resident", "owner"], { 
-    required_error: "Bitte wählen Sie Ihren Status aus" 
+  phone: validationSchemas.phone.optional().or(z.literal('')),
+  subject: validationSchemas.required('Betreff ist erforderlich'),
+  category: validationSchemas.required('Kategorie ist erforderlich'),
+  message: validationSchemas.minLength(
+    10,
+    'Nachricht muss mindestens 10 Zeichen lang sein'
+  ),
+  contactStatus: z.enum(['resident', 'owner'], {
+    required_error: 'Bitte wählen Sie Ihren Status aus',
   }),
   attachments: z.array(z.any()).optional(),
 });
 
 type ContactFormData = z.infer<typeof contactFormSchema>;
 
-type ContactStatus = "resident" | "owner" | "";
+type ContactStatus = 'resident' | 'owner' | '';
 
 export default function NewContactPage() {
   const router = useRouter();
   const { toast } = useToast();
   const { user } = useAuth();
   const { addTicket } = useTickets();
-  
+
   // File Upload State
   const [uploadedFiles, setUploadedFiles] = React.useState<File[]>([]);
   const [showResidentDialog, setShowResidentDialog] = React.useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const cameraInputRef = React.useRef<HTMLInputElement>(null);
-  
+
   // Mobile Detection
   const [isMobile, setIsMobile] = React.useState(false);
-  
+
   React.useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768 || /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+      setIsMobile(
+        window.innerWidth < 768 ||
+          /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+            navigator.userAgent
+          )
+      );
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    
+
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
@@ -82,27 +114,27 @@ export default function NewContactPage() {
     getFieldError,
     hasFieldError,
     handleSubmit,
-    reset
+    reset,
   } = useFormValidation<ContactFormData>({
     schema: contactFormSchema,
     initialValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      subject: "",
-      category: "",
-      message: "",
-      contactStatus: "owner", // Default
-      attachments: []
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      subject: '',
+      category: '',
+      message: '',
+      contactStatus: 'owner', // Default
+      attachments: [],
     },
-    onSubmit: async (data) => {
+    onSubmit: async data => {
       // Check if user is resident and show dialog
-      if (data.contactStatus === "resident") {
+      if (data.contactStatus === 'resident') {
         setShowResidentDialog(true);
         return;
       }
-      
+
       // Process form submission for owners
       const attachments = uploadedFiles.map((file, index) => ({
         id: `att_${Date.now()}_${index}`,
@@ -115,45 +147,48 @@ export default function NewContactPage() {
       const ticketId = addTicket({
         subject: data.subject,
         requester: user?.fullName || `${data.firstName} ${data.lastName}`,
-        date: new Date().toLocaleDateString('de-DE', { 
-          year: 'numeric', 
-          month: 'long', 
-          day: 'numeric' 
+        date: new Date().toLocaleDateString('de-DE', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
         }),
-        status: "Erstellt",
+        status: 'Erstellt',
         reminderDate: null,
         category: data.category,
         message: data.message,
         email: data.email,
-        phone: data.phone || "",
+        phone: data.phone || '',
         attachments,
       });
-      
-      const attachmentInfo = uploadedFiles.length > 0 
-        ? ` mit ${uploadedFiles.length} Anhang${uploadedFiles.length > 1 ? 'en' : ''}`
-        : '';
-      
+
+      const attachmentInfo =
+        uploadedFiles.length > 0
+          ? ` mit ${uploadedFiles.length} Anhang${uploadedFiles.length > 1 ? 'en' : ''}`
+          : '';
+
       toast({
-        title: "Anfrage erfolgreich erstellt!",
+        title: 'Anfrage erfolgreich erstellt!',
         description: `Ihre Anfrage "${data.subject}" (${ticketId})${attachmentInfo} wurde an die Hausverwaltung weitergeleitet.`,
       });
-      
-      router.push("/contact");
+
+      router.push('/contact');
     },
-    resetOnSubmit: false
+    resetOnSubmit: false,
   });
 
   // Handle contact status change
   const handleContactStatusChange = (status: ContactStatus) => {
-    setValue("contactStatus", status);
-    if (status === "resident") {
-      setShowResidentDialog(true);
+    if (status === 'resident' || status === 'owner') {
+      setValue('contactStatus', status);
+      if (status === 'resident') {
+        setShowResidentDialog(true);
+      }
     }
   };
 
   const handleResidentDialogClose = () => {
     setShowResidentDialog(false);
-    setValue("contactStatus", "owner");
+    setValue('contactStatus', 'owner');
   };
 
   // File Upload Functions
@@ -176,36 +211,36 @@ export default function NewContactPage() {
   const processFiles = (fileArray: File[]) => {
     const maxFileSize = 10 * 1024 * 1024; // 10MB
     const maxFiles = 5;
-    
+
     const validFiles = fileArray.filter(file => {
       if (file.size > maxFileSize) {
         toast({
-          title: "Datei zu groß",
+          title: 'Datei zu groß',
           description: `Die Datei "${file.name}" ist größer als 10MB und wurde übersprungen.`,
-          variant: "destructive",
+          variant: 'destructive',
         });
         return false;
       }
       return true;
     });
-    
+
     if (uploadedFiles.length + validFiles.length > maxFiles) {
       toast({
-        title: "Zu viele Dateien",
+        title: 'Zu viele Dateien',
         description: `Sie können maximal ${maxFiles} Dateien hochladen.`,
-        variant: "destructive",
+        variant: 'destructive',
       });
       return;
     }
-    
+
     setUploadedFiles(prev => [...prev, ...validFiles]);
-    setValue("attachments", [...uploadedFiles, ...validFiles]);
+    setValue('attachments', [...uploadedFiles, ...validFiles]);
   };
 
   const removeFile = (index: number) => {
     const newFiles = uploadedFiles.filter((_, i) => i !== index);
     setUploadedFiles(newFiles);
-    setValue("attachments", newFiles);
+    setValue('attachments', newFiles);
   };
 
   const getFileIcon = (file: File) => {
@@ -221,27 +256,35 @@ export default function NewContactPage() {
       return (
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-            <img 
-              src={url} 
+            <img
+              src={url}
               alt={file.name}
-              className="w-full h-full object-cover" 
+              className="w-full h-full object-cover"
               onLoad={() => URL.revokeObjectURL(url)}
             />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 truncate">{file.name}</p>
-            <p className="text-xs text-gray-500">{(file.size / 1024 / 1024).toFixed(1)} MB</p>
+            <p className="text-sm font-medium text-gray-900 truncate">
+              {file.name}
+            </p>
+            <p className="text-xs text-gray-500">
+              {(file.size / 1024 / 1024).toFixed(1)} MB
+            </p>
           </div>
         </div>
       );
     }
-    
+
     return (
       <div className="flex items-center gap-3">
         {getFileIcon(file)}
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-gray-900 truncate">{file.name}</p>
-          <p className="text-xs text-gray-500">{(file.size / 1024 / 1024).toFixed(1)} MB</p>
+          <p className="text-sm font-medium text-gray-900 truncate">
+            {file.name}
+          </p>
+          <p className="text-xs text-gray-500">
+            {(file.size / 1024 / 1024).toFixed(1)} MB
+          </p>
         </div>
       </div>
     );
@@ -274,25 +317,33 @@ export default function NewContactPage() {
                   <Label htmlFor="firstName">Vorname *</Label>
                   <Input
                     id="firstName"
-                    value={values.firstName || ""}
-                    onChange={(e) => setValue("firstName", e.target.value)}
-                    className={hasFieldError("firstName") ? "border-red-500" : ""}
+                    value={values.firstName || ''}
+                    onChange={e => setValue('firstName', e.target.value)}
+                    className={
+                      hasFieldError('firstName') ? 'border-red-500' : ''
+                    }
                   />
-                  {hasFieldError("firstName") && (
-                    <p className="text-sm text-red-600">{getFieldError("firstName")}</p>
+                  {hasFieldError('firstName') && (
+                    <p className="text-sm text-red-600">
+                      {getFieldError('firstName')}
+                    </p>
                   )}
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="lastName">Nachname *</Label>
                   <Input
                     id="lastName"
-                    value={values.lastName || ""}
-                    onChange={(e) => setValue("lastName", e.target.value)}
-                    className={hasFieldError("lastName") ? "border-red-500" : ""}
+                    value={values.lastName || ''}
+                    onChange={e => setValue('lastName', e.target.value)}
+                    className={
+                      hasFieldError('lastName') ? 'border-red-500' : ''
+                    }
                   />
-                  {hasFieldError("lastName") && (
-                    <p className="text-sm text-red-600">{getFieldError("lastName")}</p>
+                  {hasFieldError('lastName') && (
+                    <p className="text-sm text-red-600">
+                      {getFieldError('lastName')}
+                    </p>
                   )}
                 </div>
               </div>
@@ -303,26 +354,30 @@ export default function NewContactPage() {
                   <Input
                     id="email"
                     type="email"
-                    value={values.email || ""}
-                    onChange={(e) => setValue("email", e.target.value)}
-                    className={hasFieldError("email") ? "border-red-500" : ""}
+                    value={values.email || ''}
+                    onChange={e => setValue('email', e.target.value)}
+                    className={hasFieldError('email') ? 'border-red-500' : ''}
                   />
-                  {hasFieldError("email") && (
-                    <p className="text-sm text-red-600">{getFieldError("email")}</p>
+                  {hasFieldError('email') && (
+                    <p className="text-sm text-red-600">
+                      {getFieldError('email')}
+                    </p>
                   )}
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="phone">Telefon (optional)</Label>
                   <Input
                     id="phone"
                     type="tel"
-                    value={values.phone || ""}
-                    onChange={(e) => setValue("phone", e.target.value)}
-                    className={hasFieldError("phone") ? "border-red-500" : ""}
+                    value={values.phone || ''}
+                    onChange={e => setValue('phone', e.target.value)}
+                    className={hasFieldError('phone') ? 'border-red-500' : ''}
                   />
-                  {hasFieldError("phone") && (
-                    <p className="text-sm text-red-600">{getFieldError("phone")}</p>
+                  {hasFieldError('phone') && (
+                    <p className="text-sm text-red-600">
+                      {getFieldError('phone')}
+                    </p>
                   )}
                 </div>
               </div>
@@ -330,19 +385,27 @@ export default function NewContactPage() {
               <div className="space-y-2">
                 <Label htmlFor="contactStatus">Ihr Status in der WEG *</Label>
                 <Select
-                  value={values.contactStatus || ""}
+                  value={values.contactStatus || ''}
                   onValueChange={handleContactStatusChange}
                 >
-                  <SelectTrigger className={hasFieldError("contactStatus") ? "border-red-500" : ""}>
+                  <SelectTrigger
+                    className={
+                      hasFieldError('contactStatus') ? 'border-red-500' : ''
+                    }
+                  >
                     <SelectValue placeholder="Bitte wählen Sie Ihren Status" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="owner">Wohnungseigentümer/in</SelectItem>
-                    <SelectItem value="resident">Bewohner/in (Mieter/in)</SelectItem>
+                    <SelectItem value="resident">
+                      Bewohner/in (Mieter/in)
+                    </SelectItem>
                   </SelectContent>
                 </Select>
-                {hasFieldError("contactStatus") && (
-                  <p className="text-sm text-red-600">{getFieldError("contactStatus")}</p>
+                {hasFieldError('contactStatus') && (
+                  <p className="text-sm text-red-600">
+                    {getFieldError('contactStatus')}
+                  </p>
                 )}
               </div>
             </CardContent>
@@ -360,23 +423,29 @@ export default function NewContactPage() {
                 <Label htmlFor="subject">Betreff *</Label>
                 <Input
                   id="subject"
-                  value={values.subject || ""}
-                  onChange={(e) => setValue("subject", e.target.value)}
+                  value={values.subject || ''}
+                  onChange={e => setValue('subject', e.target.value)}
                   placeholder="Kurze Beschreibung des Anliegens"
-                  className={hasFieldError("subject") ? "border-red-500" : ""}
+                  className={hasFieldError('subject') ? 'border-red-500' : ''}
                 />
-                {hasFieldError("subject") && (
-                  <p className="text-sm text-red-600">{getFieldError("subject")}</p>
+                {hasFieldError('subject') && (
+                  <p className="text-sm text-red-600">
+                    {getFieldError('subject')}
+                  </p>
                 )}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="category">Kategorie *</Label>
                 <Select
-                  value={values.category || ""}
-                  onValueChange={(value) => setValue("category", value)}
+                  value={values.category || ''}
+                  onValueChange={value => setValue('category', value)}
                 >
-                  <SelectTrigger className={hasFieldError("category") ? "border-red-500" : ""}>
+                  <SelectTrigger
+                    className={
+                      hasFieldError('category') ? 'border-red-500' : ''
+                    }
+                  >
                     <SelectValue placeholder="Kategorie auswählen" />
                   </SelectTrigger>
                   <SelectContent>
@@ -387,8 +456,10 @@ export default function NewContactPage() {
                     <SelectItem value="emergency">Notfall</SelectItem>
                   </SelectContent>
                 </Select>
-                {hasFieldError("category") && (
-                  <p className="text-sm text-red-600">{getFieldError("category")}</p>
+                {hasFieldError('category') && (
+                  <p className="text-sm text-red-600">
+                    {getFieldError('category')}
+                  </p>
                 )}
               </div>
 
@@ -396,14 +467,16 @@ export default function NewContactPage() {
                 <Label htmlFor="message">Nachricht *</Label>
                 <Textarea
                   id="message"
-                  value={values.message || ""}
-                  onChange={(e) => setValue("message", e.target.value)}
+                  value={values.message || ''}
+                  onChange={e => setValue('message', e.target.value)}
                   placeholder="Beschreiben Sie Ihr Anliegen detailliert..."
                   rows={6}
-                  className={hasFieldError("message") ? "border-red-500" : ""}
+                  className={hasFieldError('message') ? 'border-red-500' : ''}
                 />
-                {hasFieldError("message") && (
-                  <p className="text-sm text-red-600">{getFieldError("message")}</p>
+                {hasFieldError('message') && (
+                  <p className="text-sm text-red-600">
+                    {getFieldError('message')}
+                  </p>
                 )}
               </div>
 
@@ -421,7 +494,7 @@ export default function NewContactPage() {
                     <Upload className="mr-2 h-4 w-4" />
                     Dateien hochladen
                   </Button>
-                  
+
                   {isMobile && (
                     <Button
                       type="button"
@@ -435,7 +508,7 @@ export default function NewContactPage() {
                     </Button>
                   )}
                 </div>
-                
+
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -444,7 +517,7 @@ export default function NewContactPage() {
                   onChange={handleFileUpload}
                   className="hidden"
                 />
-                
+
                 <input
                   ref={cameraInputRef}
                   type="file"
@@ -477,7 +550,8 @@ export default function NewContactPage() {
                 )}
 
                 <p className="text-xs text-gray-500">
-                  Maximal 5 Dateien, je max. 10MB. Unterstützte Formate: Bilder, PDF, DOC, TXT
+                  Maximal 5 Dateien, je max. 10MB. Unterstützte Formate: Bilder,
+                  PDF, DOC, TXT
                 </p>
               </div>
             </CardContent>
@@ -487,7 +561,9 @@ export default function NewContactPage() {
           <div className="flex justify-end">
             <Button
               type="submit"
-              disabled={!isValid || isSubmitting || values.contactStatus === "resident"}
+              disabled={
+                !isValid || isSubmitting || values.contactStatus === 'resident'
+              }
               className="min-w-[200px]"
             >
               {isSubmitting ? (
@@ -514,30 +590,32 @@ export default function NewContactPage() {
                 Information für Bewohner
               </DialogTitle>
               <DialogDescription>
-                Als Bewohner/Mieter können Sie über dieses System keine direkten Anfragen stellen.
+                Als Bewohner/Mieter können Sie über dieses System keine direkten
+                Anfragen stellen.
               </DialogDescription>
             </DialogHeader>
-            
+
             <div className="space-y-4">
               <Alert>
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  Bitte wenden Sie sich bei Anliegen zunächst an Ihren Vermieter oder direkt an die Hausverwaltung.
+                  Bitte wenden Sie sich bei Anliegen zunächst an Ihren Vermieter
+                  oder direkt an die Hausverwaltung.
                 </AlertDescription>
               </Alert>
-              
+
               <div className="text-sm text-gray-600 space-y-2">
-                <p><strong>Kontaktdaten der Hausverwaltung:</strong></p>
+                <p>
+                  <strong>Kontaktdaten der Hausverwaltung:</strong>
+                </p>
                 <p>Telefon: +49 (0) 30 12345678</p>
                 <p>E-Mail: info@hausverwaltung-silberbach.de</p>
                 <p>Sprechzeiten: Mo-Fr 9:00-17:00 Uhr</p>
               </div>
             </div>
-            
+
             <DialogFooter>
-              <Button onClick={handleResidentDialogClose}>
-                Verstanden
-              </Button>
+              <Button onClick={handleResidentDialogClose}>Verstanden</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

@@ -1,8 +1,13 @@
-"use client";
+'use client';
 
 import { useState, useEffect } from 'react';
 
-export type UserRole = 'admin' | 'board' | 'owner' | 'resident' | 'hausverwalter';
+export type UserRole =
+  | 'admin'
+  | 'board'
+  | 'owner'
+  | 'resident'
+  | 'hausverwalter';
 
 interface User {
   id: string;
@@ -23,10 +28,15 @@ export function useAuth() {
   useEffect(() => {
     // Simulation der Benutzeranmeldung - lädt Rolle aus localStorage für Demo
     let demoRole: UserRole = 'resident'; // Standard
-    
+
     if (typeof window !== 'undefined') {
       const savedRole = localStorage.getItem('demo-role') as UserRole;
-      if (savedRole && ['admin', 'board', 'owner', 'resident', 'hausverwalter'].includes(savedRole)) {
+      if (
+        savedRole &&
+        ['admin', 'board', 'owner', 'resident', 'hausverwalter'].includes(
+          savedRole
+        )
+      ) {
         demoRole = savedRole;
       }
     }
@@ -36,7 +46,7 @@ export function useAuth() {
       name: 'Demo Benutzer',
       email: 'demo@silberbach.de',
       fullName: 'Herr Schmidt', // Für Konsistenz mit bestehenden Mock-Daten
-      roles: [demoRole]
+      roles: [demoRole],
     };
 
     setTimeout(() => {

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState, useEffect } from 'react';
 
@@ -20,7 +20,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
       }
 
       const item = window.localStorage.getItem(key);
-      
+
       if (item) {
         setStoredValue(JSON.parse(item));
       }
@@ -35,9 +35,10 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
   const setValue = (value: T | ((val: T) => T)) => {
     try {
       // Funktionale Updates unterstützen
-      const valueToStore = value instanceof Function ? value(storedValue) : value;
+      const valueToStore =
+        value instanceof Function ? value(storedValue) : value;
       setStoredValue(valueToStore);
-      
+
       // Verhindert SSR-Probleme
       if (typeof window !== 'undefined') {
         window.localStorage.setItem(key, JSON.stringify(valueToStore));

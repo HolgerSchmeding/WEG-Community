@@ -8,28 +8,28 @@ async function getFirebaseUsage(projectId: string) {
     currentMonth: {
       aiRequests: 743, // Fest für Demo
       maxRequests: 1000,
-      cost: 24.70, // €24.70 - realistisch für WEG-Community Nutzung
-      budget: 50.00
+      cost: 24.7, // €24.70 - realistisch für WEG-Community Nutzung
+      budget: 50.0,
     },
     breakdown: [
-      { 
-        service: "Gemini 2.5 Flash", 
-        requests: 423, 
-        cost: 18.20, // Hauptteil der Kosten
-        avgResponseTime: "1.2s"
+      {
+        service: 'Gemini 2.5 Flash',
+        requests: 423,
+        cost: 18.2, // Hauptteil der Kosten
+        avgResponseTime: '1.2s',
       },
-      { 
-        service: "Gemini 1.5 Flash", 
-        requests: 234, 
-        cost: 4.80, // Günstigere Variante
-        avgResponseTime: "0.9s"
+      {
+        service: 'Gemini 1.5 Flash',
+        requests: 234,
+        cost: 4.8, // Günstigere Variante
+        avgResponseTime: '0.9s',
       },
-      { 
-        service: "Document AI", 
-        requests: 86, 
-        cost: 1.70, // Dokumentenverarbeitung
-        avgResponseTime: "0.7s"
-      }
+      {
+        service: 'Document AI',
+        requests: 86,
+        cost: 1.7, // Dokumentenverarbeitung
+        avgResponseTime: '0.7s',
+      },
     ],
     dailyUsage: [
       { day: 'So', requests: 45 },
@@ -38,23 +38,30 @@ async function getFirebaseUsage(projectId: string) {
       { day: 'Mi', requests: 112 },
       { day: 'Do', requests: 134 },
       { day: 'Fr', requests: 89 },
-      { day: 'Sa', requests: 138 }
-    ]
+      { day: 'Sa', requests: 138 },
+    ],
   };
 }
 
 export async function GET(request: NextRequest) {
   try {
     const projectId = 'silberbach-community-hub-t4zya';
-    
+
     // Hole Usage-Daten
     const usageData = await getFirebaseUsage(projectId);
-    
+
     // Zusätzliche berechnete Metriken
-    const totalRequests = usageData.breakdown.reduce((sum, service) => sum + service.requests, 0);
-    const totalCost = usageData.breakdown.reduce((sum, service) => sum + service.cost, 0);
-    const weeklyAverage = usageData.dailyUsage.reduce((sum, day) => sum + day.requests, 0) / 7;
-    
+    const totalRequests = usageData.breakdown.reduce(
+      (sum, service) => sum + service.requests,
+      0
+    );
+    const totalCost = usageData.breakdown.reduce(
+      (sum, service) => sum + service.cost,
+      0
+    );
+    const weeklyAverage =
+      usageData.dailyUsage.reduce((sum, day) => sum + day.requests, 0) / 7;
+
     const response = {
       ...usageData,
       metrics: {
@@ -62,11 +69,14 @@ export async function GET(request: NextRequest) {
         totalCost: Math.round(totalCost * 100) / 100,
         weeklyAverage: Math.round(weeklyAverage),
         projectedMonthly: Math.round(weeklyAverage * 4.33 * 7), // 4.33 Wochen pro Monat
-        costPerRequest: totalRequests > 0 ? Math.round((totalCost / totalRequests) * 1000) / 10 : 0 // in Cent
+        costPerRequest:
+          totalRequests > 0
+            ? Math.round((totalCost / totalRequests) * 1000) / 10
+            : 0, // in Cent
       },
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     };
-    
+
     return NextResponse.json(response);
   } catch (error) {
     console.error('Error fetching usage data:', error);

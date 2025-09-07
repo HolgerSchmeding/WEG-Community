@@ -1,35 +1,35 @@
-"use client";
+'use client';
 
-import React, { useState, useMemo } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { 
-  Search, 
-  Sparkles, 
-  Filter, 
-  FileText, 
-  Calendar, 
-  Tag, 
+import React, { useState, useMemo } from 'react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import {
+  Search,
+  Sparkles,
+  Filter,
+  FileText,
+  Calendar,
+  Tag,
   Clock,
   X,
-  Loader2
-} from "lucide-react";
+  Loader2,
+} from 'lucide-react';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Label } from "@/components/ui/label";
+} from '@/components/ui/popover';
+import { Label } from '@/components/ui/label';
 // import { runFlow } from '@genkit-ai/next/client';
 // import { intelligentDocumentSearch, type DocumentSearchInput } from '@/ai/flows/document-search';
 
@@ -58,63 +58,78 @@ interface SearchFilters {
   author: string;
 }
 
-export function IntelligentDocumentSearch({ 
-  documents, 
+export function IntelligentDocumentSearch({
+  documents,
   onDocumentSelect,
-  userRole = 'resident' 
+  userRole = 'resident',
 }: IntelligentDocumentSearchProps) {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Document[]>(documents);
   const [isAISearching, setIsAISearching] = useState(false);
   const [searchMode, setSearchMode] = useState<'text' | 'ai'>('text');
   const [filters, setFilters] = useState<SearchFilters>({
-    category: "all",
-    type: "all", 
-    dateRange: "all",
-    author: "all"
+    category: 'all',
+    type: 'all',
+    dateRange: 'all',
+    author: 'all',
   });
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
 
   // Filtere Dokumente basierend auf Benutzerrolle
   const accessibleDocuments = useMemo(() => {
-    return documents.filter(doc => 
-      doc.permissions.includes('all') || 
-      doc.permissions.includes(userRole) ||
-      (userRole === 'admin' && doc.permissions.includes('board')) ||
-      (userRole === 'board' && doc.permissions.includes('owner'))
+    return documents.filter(
+      doc =>
+        doc.permissions.includes('all') ||
+        doc.permissions.includes(userRole) ||
+        (userRole === 'admin' && doc.permissions.includes('board')) ||
+        (userRole === 'board' && doc.permissions.includes('owner'))
     );
   }, [documents, userRole]);
 
   // Eindeutige Werte für Filter-Optionen
   const filterOptions = useMemo(() => {
-    const categories = [...new Set(accessibleDocuments.map(doc => doc.category))];
+    const categories = [
+      ...new Set(accessibleDocuments.map(doc => doc.category)),
+    ];
     const types = [...new Set(accessibleDocuments.map(doc => doc.type))];
     const authors = [...new Set(accessibleDocuments.map(doc => doc.author))];
-    
+
     return { categories, types, authors };
   }, [accessibleDocuments]);
 
   // Einfache Textsuche
   const performTextSearch = (query: string, docs: Document[]) => {
     if (!query.trim()) return docs;
-    
-    const searchTerms = query.toLowerCase().split(' ').filter(term => term.length > 0);
-    
-    return docs.filter(doc => {
-      const searchableText = `${doc.title} ${doc.content} ${doc.tags.join(' ')}`.toLowerCase();
-      return searchTerms.every(term => searchableText.includes(term));
-    }).sort((a, b) => {
-      // Relevanz-Score basierend auf Titel-Matches
-      const aScore = searchTerms.reduce((score, term) => 
-        score + (a.title.toLowerCase().includes(term) ? 2 : 0) +
-                (a.content.toLowerCase().includes(term) ? 1 : 0), 0
-      );
-      const bScore = searchTerms.reduce((score, term) => 
-        score + (b.title.toLowerCase().includes(term) ? 2 : 0) +
-                (b.content.toLowerCase().includes(term) ? 1 : 0), 0
-      );
-      return bScore - aScore;
-    });
+
+    const searchTerms = query
+      .toLowerCase()
+      .split(' ')
+      .filter(term => term.length > 0);
+
+    return docs
+      .filter(doc => {
+        const searchableText =
+          `${doc.title} ${doc.content} ${doc.tags.join(' ')}`.toLowerCase();
+        return searchTerms.every(term => searchableText.includes(term));
+      })
+      .sort((a, b) => {
+        // Relevanz-Score basierend auf Titel-Matches
+        const aScore = searchTerms.reduce(
+          (score, term) =>
+            score +
+            (a.title.toLowerCase().includes(term) ? 2 : 0) +
+            (a.content.toLowerCase().includes(term) ? 1 : 0),
+          0
+        );
+        const bScore = searchTerms.reduce(
+          (score, term) =>
+            score +
+            (b.title.toLowerCase().includes(term) ? 2 : 0) +
+            (b.content.toLowerCase().includes(term) ? 1 : 0),
+          0
+        );
+        return bScore - aScore;
+      });
   };
 
   // KI-basierte Kontextsuche (simuliert)
@@ -128,17 +143,20 @@ export function IntelligentDocumentSearch({
     try {
       // Simuliere KI-Verarbeitung
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Erweiterte Textsuche mit semantischer Ähnlichkeit
-      const searchTerms = query.toLowerCase().split(' ').filter(term => term.length > 1);
+      const searchTerms = query
+        .toLowerCase()
+        .split(' ')
+        .filter(term => term.length > 1);
       const synonyms = {
-        'heizung': ['wärme', 'temperatur', 'heizen'],
-        'müll': ['abfall', 'entsorgung', 'container'],
-        'lärm': ['ruhe', 'lärmschutz', 'geräusch'],
-        'parken': ['fahrzeug', 'auto', 'stellplatz'],
-        'garten': ['grün', 'bepflanzung', 'außenanlage'],
-        'versammlung': ['meeting', 'sitzung', 'protokoll'],
-        'kosten': ['geld', 'euro', 'finanz', 'ausgaben']
+        heizung: ['wärme', 'temperatur', 'heizen'],
+        müll: ['abfall', 'entsorgung', 'container'],
+        lärm: ['ruhe', 'lärmschutz', 'geräusch'],
+        parken: ['fahrzeug', 'auto', 'stellplatz'],
+        garten: ['grün', 'bepflanzung', 'außenanlage'],
+        versammlung: ['meeting', 'sitzung', 'protokoll'],
+        kosten: ['geld', 'euro', 'finanz', 'ausgaben'],
       };
 
       const expandedTerms = [...searchTerms];
@@ -148,27 +166,38 @@ export function IntelligentDocumentSearch({
         }
       });
 
-      const aiResults = accessibleDocuments.filter(doc => {
-        const searchableText = `${doc.title} ${doc.content} ${doc.tags.join(' ')}`.toLowerCase();
-        return expandedTerms.some(term => searchableText.includes(term));
-      }).sort((a, b) => {
-        // Score basierend auf Anzahl gefundener Begriffe und Position
-        const aScore = expandedTerms.reduce((score, term) => {
-          const titleMatch = a.title.toLowerCase().includes(term) ? 3 : 0;
-          const contentMatch = a.content.toLowerCase().includes(term) ? 1 : 0;
-          const tagMatch = a.tags.some(tag => tag.toLowerCase().includes(term)) ? 2 : 0;
-          return score + titleMatch + contentMatch + tagMatch;
-        }, 0);
-        
-        const bScore = expandedTerms.reduce((score, term) => {
-          const titleMatch = b.title.toLowerCase().includes(term) ? 3 : 0;
-          const contentMatch = b.content.toLowerCase().includes(term) ? 1 : 0;
-          const tagMatch = b.tags.some(tag => tag.toLowerCase().includes(term)) ? 2 : 0;
-          return score + titleMatch + contentMatch + tagMatch;
-        }, 0);
-        
-        return bScore - aScore;
-      });
+      const aiResults = accessibleDocuments
+        .filter(doc => {
+          const searchableText =
+            `${doc.title} ${doc.content} ${doc.tags.join(' ')}`.toLowerCase();
+          return expandedTerms.some(term => searchableText.includes(term));
+        })
+        .sort((a, b) => {
+          // Score basierend auf Anzahl gefundener Begriffe und Position
+          const aScore = expandedTerms.reduce((score, term) => {
+            const titleMatch = a.title.toLowerCase().includes(term) ? 3 : 0;
+            const contentMatch = a.content.toLowerCase().includes(term) ? 1 : 0;
+            const tagMatch = a.tags.some(tag =>
+              tag.toLowerCase().includes(term)
+            )
+              ? 2
+              : 0;
+            return score + titleMatch + contentMatch + tagMatch;
+          }, 0);
+
+          const bScore = expandedTerms.reduce((score, term) => {
+            const titleMatch = b.title.toLowerCase().includes(term) ? 3 : 0;
+            const contentMatch = b.content.toLowerCase().includes(term) ? 1 : 0;
+            const tagMatch = b.tags.some(tag =>
+              tag.toLowerCase().includes(term)
+            )
+              ? 2
+              : 0;
+            return score + titleMatch + contentMatch + tagMatch;
+          }, 0);
+
+          return bScore - aScore;
+        });
 
       setSearchResults(applyFilters(aiResults));
     } catch (error) {
@@ -185,32 +214,32 @@ export function IntelligentDocumentSearch({
   const applyFilters = (docs: Document[]) => {
     let filtered = [...docs];
 
-    if (filters.category !== "all") {
+    if (filters.category !== 'all') {
       filtered = filtered.filter(doc => doc.category === filters.category);
     }
-    if (filters.type !== "all") {
+    if (filters.type !== 'all') {
       filtered = filtered.filter(doc => doc.type === filters.type);
     }
-    if (filters.author !== "all") {
+    if (filters.author !== 'all') {
       filtered = filtered.filter(doc => doc.author === filters.author);
     }
-    if (filters.dateRange !== "all") {
+    if (filters.dateRange !== 'all') {
       const now = new Date();
       const docDate = new Date();
-      
+
       switch (filters.dateRange) {
-        case "week":
+        case 'week':
           docDate.setDate(now.getDate() - 7);
           break;
-        case "month":
+        case 'month':
           docDate.setMonth(now.getMonth() - 1);
           break;
-        case "year":
+        case 'year':
           docDate.setFullYear(now.getFullYear() - 1);
           break;
       }
-      
-      if (filters.dateRange !== "all") {
+
+      if (filters.dateRange !== 'all') {
         filtered = filtered.filter(doc => new Date(doc.date) >= docDate);
       }
     }
@@ -229,16 +258,19 @@ export function IntelligentDocumentSearch({
   };
 
   // Filter ändern
-  const handleFilterChange = (filterType: keyof SearchFilters, value: string) => {
+  const handleFilterChange = (
+    filterType: keyof SearchFilters,
+    value: string
+  ) => {
     const newFilters = { ...filters, [filterType]: value };
     setFilters(newFilters);
-    
+
     // Aktive Filter aktualisieren
     const newActiveFilters = Object.entries(newFilters)
-      .filter(([_, v]) => v !== "all")
+      .filter(([_, v]) => v !== 'all')
       .map(([k, v]) => `${k}: ${v}`);
     setActiveFilters(newActiveFilters);
-    
+
     // Filter sofort anwenden
     setSearchResults(applyFilters(searchResults));
   };
@@ -246,10 +278,10 @@ export function IntelligentDocumentSearch({
   // Filter zurücksetzen
   const clearFilters = () => {
     const clearedFilters = {
-      category: "all",
-      type: "all",
-      dateRange: "all", 
-      author: "all"
+      category: 'all',
+      type: 'all',
+      dateRange: 'all',
+      author: 'all',
     };
     setFilters(clearedFilters);
     setActiveFilters([]);
@@ -280,7 +312,7 @@ export function IntelligentDocumentSearch({
               <Input
                 placeholder="Suchen Sie nach Begriffen oder stellen Sie eine Frage..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={e => setSearchQuery(e.target.value)}
                 onKeyPress={handleKeyPress}
                 className="pr-10"
               />
@@ -290,7 +322,7 @@ export function IntelligentDocumentSearch({
                   size="sm"
                   className="absolute right-1 top-1 h-8 w-8 p-0"
                   onClick={() => {
-                    setSearchQuery("");
+                    setSearchQuery('');
                     setSearchResults(applyFilters(accessibleDocuments));
                   }}
                 >
@@ -298,9 +330,12 @@ export function IntelligentDocumentSearch({
                 </Button>
               )}
             </div>
-            
+
             {/* Suchmodus Toggle */}
-            <Select value={searchMode} onValueChange={(value: 'text' | 'ai') => setSearchMode(value)}>
+            <Select
+              value={searchMode}
+              onValueChange={(value: 'text' | 'ai') => setSearchMode(value)}
+            >
               <SelectTrigger className="w-32">
                 <SelectValue />
               </SelectTrigger>
@@ -346,18 +381,25 @@ export function IntelligentDocumentSearch({
               <PopoverContent className="w-80">
                 <div className="space-y-4">
                   <h4 className="font-medium">Suchfilter</h4>
-                  
+
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Label>Kategorie</Label>
-                      <Select value={filters.category} onValueChange={(value) => handleFilterChange('category', value)}>
+                      <Select
+                        value={filters.category}
+                        onValueChange={value =>
+                          handleFilterChange('category', value)
+                        }
+                      >
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="all">Alle</SelectItem>
                           {filterOptions.categories.map(category => (
-                            <SelectItem key={category} value={category}>{category}</SelectItem>
+                            <SelectItem key={category} value={category}>
+                              {category}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -365,14 +407,21 @@ export function IntelligentDocumentSearch({
 
                     <div>
                       <Label>Dokumenttyp</Label>
-                      <Select value={filters.type} onValueChange={(value) => handleFilterChange('type', value)}>
+                      <Select
+                        value={filters.type}
+                        onValueChange={value =>
+                          handleFilterChange('type', value)
+                        }
+                      >
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="all">Alle</SelectItem>
                           {filterOptions.types.map(type => (
-                            <SelectItem key={type} value={type}>{type}</SelectItem>
+                            <SelectItem key={type} value={type}>
+                              {type}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -380,7 +429,12 @@ export function IntelligentDocumentSearch({
 
                     <div>
                       <Label>Zeitraum</Label>
-                      <Select value={filters.dateRange} onValueChange={(value) => handleFilterChange('dateRange', value)}>
+                      <Select
+                        value={filters.dateRange}
+                        onValueChange={value =>
+                          handleFilterChange('dateRange', value)
+                        }
+                      >
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
@@ -395,14 +449,21 @@ export function IntelligentDocumentSearch({
 
                     <div>
                       <Label>Autor</Label>
-                      <Select value={filters.author} onValueChange={(value) => handleFilterChange('author', value)}>
+                      <Select
+                        value={filters.author}
+                        onValueChange={value =>
+                          handleFilterChange('author', value)
+                        }
+                      >
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="all">Alle</SelectItem>
                           {filterOptions.authors.map(author => (
-                            <SelectItem key={author} value={author}>{author}</SelectItem>
+                            <SelectItem key={author} value={author}>
+                              {author}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -410,7 +471,11 @@ export function IntelligentDocumentSearch({
                   </div>
 
                   {activeFilters.length > 0 && (
-                    <Button variant="outline" onClick={clearFilters} className="w-full">
+                    <Button
+                      variant="outline"
+                      onClick={clearFilters}
+                      className="w-full"
+                    >
                       Alle Filter zurücksetzen
                     </Button>
                   )}
@@ -451,7 +516,9 @@ export function IntelligentDocumentSearch({
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold">
-            {searchQuery ? `Suchergebnisse für "${searchQuery}"` : 'Alle Dokumente'}
+            {searchQuery
+              ? `Suchergebnisse für "${searchQuery}"`
+              : 'Alle Dokumente'}
           </h3>
           <Badge variant="outline">
             {searchResults.length} von {accessibleDocuments.length} Dokumenten
@@ -462,19 +529,26 @@ export function IntelligentDocumentSearch({
           <Card>
             <CardContent className="py-12 text-center">
               <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h4 className="text-lg font-medium mb-2">Keine Dokumente gefunden</h4>
+              <h4 className="text-lg font-medium mb-2">
+                Keine Dokumente gefunden
+              </h4>
               <p className="text-muted-foreground">
-                {searchQuery 
-                  ? "Versuchen Sie andere Suchbegriffe oder passen Sie die Filter an."
-                  : "Es sind keine Dokumente verfügbar."
-                }
+                {searchQuery
+                  ? 'Versuchen Sie andere Suchbegriffe oder passen Sie die Filter an.'
+                  : 'Es sind keine Dokumente verfügbar.'}
               </p>
             </CardContent>
           </Card>
         ) : (
-          searchResults.map((doc) => (
-            <Card key={doc.id} className="cursor-pointer hover:bg-muted/50 transition-colors">
-              <CardContent className="p-4" onClick={() => onDocumentSelect(doc)}>
+          searchResults.map(doc => (
+            <Card
+              key={doc.id}
+              className="cursor-pointer hover:bg-muted/50 transition-colors"
+            >
+              <CardContent
+                className="p-4"
+                onClick={() => onDocumentSelect(doc)}
+              >
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
                     <h4 className="font-medium text-base mb-2 line-clamp-1">
@@ -502,7 +576,11 @@ export function IntelligentDocumentSearch({
                     {doc.tags.length > 0 && (
                       <div className="flex flex-wrap gap-1">
                         {doc.tags.slice(0, 3).map((tag, index) => (
-                          <Badge key={index} variant="secondary" className="text-xs">
+                          <Badge
+                            key={index}
+                            variant="secondary"
+                            className="text-xs"
+                          >
                             {tag}
                           </Badge>
                         ))}

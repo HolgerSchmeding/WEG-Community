@@ -4,7 +4,13 @@ import React, { useState } from 'react';
 import { LiveProtocolSessionComponent } from '@/components/admin/live-protocol-session';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
@@ -42,73 +48,81 @@ const availableMeetings: SimpleMeeting[] = [
         id: 'top-1',
         order: 1,
         title: 'Begrüßung und Feststellung der Beschlussfähigkeit',
-        description: 'Versammlungsleiter begrüßt die Anwesenden und stellt die Beschlussfähigkeit fest.',
+        description:
+          'Versammlungsleiter begrüßt die Anwesenden und stellt die Beschlussfähigkeit fest.',
         type: 'Information',
         duration: 10,
-        requiresVoting: false
+        requiresVoting: false,
       },
       {
         id: 'top-2',
         order: 2,
         title: 'Genehmigung der Tagesordnung',
-        description: 'Die versendete Tagesordnung wird zur Abstimmung gestellt.',
+        description:
+          'Die versendete Tagesordnung wird zur Abstimmung gestellt.',
         type: 'Beschluss',
         duration: 5,
-        requiresVoting: true
+        requiresVoting: true,
       },
       {
         id: 'top-3',
         order: 3,
         title: 'Genehmigung des Protokolls der letzten Versammlung',
-        description: 'Das Protokoll der Eigentümerversammlung vom 15.01.2024 wird zur Genehmigung vorgelegt.',
+        description:
+          'Das Protokoll der Eigentümerversammlung vom 15.01.2024 wird zur Genehmigung vorgelegt.',
         type: 'Beschluss',
         duration: 10,
-        requiresVoting: true
+        requiresVoting: true,
       },
       {
         id: 'top-4',
         order: 4,
         title: 'Jahresabschluss 2024 - Entlastung des Verwalters',
-        description: 'Präsentation der Jahresabrechnung 2024 und Abstimmung über die Entlastung der Verwaltung.',
+        description:
+          'Präsentation der Jahresabrechnung 2024 und Abstimmung über die Entlastung der Verwaltung.',
         type: 'Beschluss',
         duration: 30,
-        requiresVoting: true
+        requiresVoting: true,
       },
       {
         id: 'top-5',
         order: 5,
         title: 'Wirtschaftsplan 2025 - Hausgelderhöhung',
-        description: 'Vorstellung des Wirtschaftsplans 2025 mit geplanter Hausgeldanpassung von durchschnittlich 15€ pro Einheit.',
+        description:
+          'Vorstellung des Wirtschaftsplans 2025 mit geplanter Hausgeldanpassung von durchschnittlich 15€ pro Einheit.',
         type: 'Beschluss',
         duration: 45,
-        requiresVoting: true
+        requiresVoting: true,
       },
       {
         id: 'top-6',
         order: 6,
         title: 'Sonderumlage für Dachsanierung',
-        description: 'Abstimmung über Sonderumlage in Höhe von 180.000€ für die dringend erforderliche Dachsanierung.',
+        description:
+          'Abstimmung über Sonderumlage in Höhe von 180.000€ für die dringend erforderliche Dachsanierung.',
         type: 'Beschluss',
         duration: 60,
-        requiresVoting: true
+        requiresVoting: true,
       },
       {
         id: 'top-7',
         order: 7,
         title: 'Modernisierung der Heizungsanlage',
-        description: 'Beratung über den Austausch der 25 Jahre alten Gasheizung gegen eine moderne Wärmepumpenanlage.',
+        description:
+          'Beratung über den Austausch der 25 Jahre alten Gasheizung gegen eine moderne Wärmepumpenanlage.',
         type: 'Beratung',
         duration: 45,
-        requiresVoting: false
+        requiresVoting: false,
       },
       {
         id: 'top-8',
         order: 8,
         title: 'Wahl des Verwaltungsbeirats',
-        description: 'Neuwahl des Verwaltungsbeirats für die Amtszeit 2025-2027. Kandidaten: Schmidt, Müller, Weber.',
+        description:
+          'Neuwahl des Verwaltungsbeirats für die Amtszeit 2025-2027. Kandidaten: Schmidt, Müller, Weber.',
         type: 'Beschluss',
         duration: 30,
-        requiresVoting: true
+        requiresVoting: true,
       },
       {
         id: 'top-9',
@@ -117,9 +131,9 @@ const availableMeetings: SimpleMeeting[] = [
         description: 'Weitere Anträge und Wortmeldungen der Eigentümer.',
         type: 'Information',
         duration: 15,
-        requiresVoting: false
-      }
-    ]
+        requiresVoting: false,
+      },
+    ],
   },
   {
     id: 'meeting-2025-03-20',
@@ -135,19 +149,20 @@ const availableMeetings: SimpleMeeting[] = [
         description: 'Versammlungsleiter begrüßt die Anwesenden.',
         type: 'Information',
         duration: 5,
-        requiresVoting: false
+        requiresVoting: false,
       },
       {
         id: 'top-2',
         order: 2,
         title: 'Wasserschaden Keller - Sofortmaßnahmen',
-        description: 'Abstimmung über Notfall-Sonderumlage von 50.000€ für Wasserschadensanierung.',
+        description:
+          'Abstimmung über Notfall-Sonderumlage von 50.000€ für Wasserschadensanierung.',
         type: 'Beschluss',
         duration: 45,
-        requiresVoting: true
-      }
-    ]
-  }
+        requiresVoting: true,
+      },
+    ],
+  },
 ];
 
 export default function AdminLiveProtocolPage() {
@@ -156,12 +171,19 @@ export default function AdminLiveProtocolPage() {
   const [sessionConfig, setSessionConfig] = useState({
     chairperson: '',
     secretary: '',
-    totalVoters: ''
+    totalVoters: '',
   });
 
   const createSession = () => {
-    const selectedMeeting = availableMeetings.find(m => m.id === selectedMeetingId);
-    if (!selectedMeeting || !sessionConfig.chairperson || !sessionConfig.secretary || !sessionConfig.totalVoters) {
+    const selectedMeeting = availableMeetings.find(
+      m => m.id === selectedMeetingId
+    );
+    if (
+      !selectedMeeting ||
+      !sessionConfig.chairperson ||
+      !sessionConfig.secretary ||
+      !sessionConfig.totalVoters
+    ) {
       return;
     }
 
@@ -185,8 +207,8 @@ export default function AdminLiveProtocolPage() {
         isCompleted: false,
         notes: '',
         keywords: '',
-        currentVoters: parseInt(sessionConfig.totalVoters) // Anfangswert = Gesamtzahl
-      }))
+        currentVoters: parseInt(sessionConfig.totalVoters), // Anfangswert = Gesamtzahl
+      })),
     };
 
     setSession(newSession);
@@ -201,15 +223,15 @@ export default function AdminLiveProtocolPage() {
     return (
       <div className="container mx-auto py-6">
         <div className="mb-4">
-          <Button 
-            onClick={() => setSession(null)} 
+          <Button
+            onClick={() => setSession(null)}
             variant="outline"
             className="mb-4"
           >
             ← Zurück zur Auswahl
           </Button>
         </div>
-        <LiveProtocolSessionComponent 
+        <LiveProtocolSessionComponent
           session={session}
           onUpdateSession={handleUpdateSession}
         />
@@ -227,7 +249,8 @@ export default function AdminLiveProtocolPage() {
             Live-Protokollierung (Admin)
           </h1>
           <p className="text-muted-foreground mt-1">
-            Neue Protokollsitzung für eine geplante Eigentümerversammlung starten
+            Neue Protokollsitzung für eine geplante Eigentümerversammlung
+            starten
           </p>
         </div>
       </div>
@@ -244,7 +267,10 @@ export default function AdminLiveProtocolPage() {
           {/* Meeting Selection */}
           <div className="space-y-3">
             <Label htmlFor="meeting-select">Versammlung auswählen</Label>
-            <Select value={selectedMeetingId} onValueChange={setSelectedMeetingId}>
+            <Select
+              value={selectedMeetingId}
+              onValueChange={setSelectedMeetingId}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Wählen Sie eine geplante Versammlung aus..." />
               </SelectTrigger>
@@ -254,13 +280,13 @@ export default function AdminLiveProtocolPage() {
                     <div className="flex flex-col">
                       <span className="font-medium">{meeting.title}</span>
                       <span className="text-sm text-muted-foreground">
-                        {meeting.date.toLocaleDateString('de-DE', { 
+                        {meeting.date.toLocaleDateString('de-DE', {
                           weekday: 'long',
-                          year: 'numeric', 
-                          month: 'long', 
+                          year: 'numeric',
+                          month: 'long',
                           day: 'numeric',
                           hour: '2-digit',
-                          minute: '2-digit'
+                          minute: '2-digit',
                         })}
                       </span>
                     </div>
@@ -275,17 +301,25 @@ export default function AdminLiveProtocolPage() {
             <Card className="bg-muted/50">
               <CardContent className="p-4">
                 {(() => {
-                  const meeting = availableMeetings.find(m => m.id === selectedMeetingId);
+                  const meeting = availableMeetings.find(
+                    m => m.id === selectedMeetingId
+                  );
                   return meeting ? (
                     <div className="space-y-3">
-                      <h4 className="font-medium">Tagesordnung ({meeting.agenda.length} TOPs)</h4>
+                      <h4 className="font-medium">
+                        Tagesordnung ({meeting.agenda.length} TOPs)
+                      </h4>
                       <div className="space-y-2 max-h-40 overflow-y-auto">
                         {meeting.agenda.map((item: any) => (
                           <div key={item.id} className="flex gap-2 text-sm">
-                            <span className="font-medium min-w-12">TOP {item.order}:</span>
+                            <span className="font-medium min-w-12">
+                              TOP {item.order}:
+                            </span>
                             <div>
                               <div className="font-medium">{item.title}</div>
-                              <div className="text-muted-foreground text-xs">{item.description}</div>
+                              <div className="text-muted-foreground text-xs">
+                                {item.description}
+                              </div>
                             </div>
                           </div>
                         ))}
@@ -304,17 +338,27 @@ export default function AdminLiveProtocolPage() {
               <Input
                 id="chairperson"
                 value={sessionConfig.chairperson}
-                onChange={(e) => setSessionConfig(prev => ({ ...prev, chairperson: e.target.value }))}
+                onChange={e =>
+                  setSessionConfig(prev => ({
+                    ...prev,
+                    chairperson: e.target.value,
+                  }))
+                }
                 placeholder="Name des Versammlungsleiters"
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="secretary">Protokollführer</Label>
               <Input
                 id="secretary"
                 value={sessionConfig.secretary}
-                onChange={(e) => setSessionConfig(prev => ({ ...prev, secretary: e.target.value }))}
+                onChange={e =>
+                  setSessionConfig(prev => ({
+                    ...prev,
+                    secretary: e.target.value,
+                  }))
+                }
                 placeholder="Name des Protokollführers"
               />
             </div>
@@ -325,7 +369,12 @@ export default function AdminLiveProtocolPage() {
                 id="totalVoters"
                 type="number"
                 value={sessionConfig.totalVoters}
-                onChange={(e) => setSessionConfig(prev => ({ ...prev, totalVoters: e.target.value }))}
+                onChange={e =>
+                  setSessionConfig(prev => ({
+                    ...prev,
+                    totalVoters: e.target.value,
+                  }))
+                }
                 placeholder="Anzahl"
                 min="1"
               />
@@ -333,9 +382,14 @@ export default function AdminLiveProtocolPage() {
           </div>
 
           {/* Start Button */}
-          <Button 
+          <Button
             onClick={createSession}
-            disabled={!selectedMeetingId || !sessionConfig.chairperson || !sessionConfig.secretary || !sessionConfig.totalVoters}
+            disabled={
+              !selectedMeetingId ||
+              !sessionConfig.chairperson ||
+              !sessionConfig.secretary ||
+              !sessionConfig.totalVoters
+            }
             className="w-full"
             size="lg"
           >
@@ -353,23 +407,29 @@ export default function AdminLiveProtocolPage() {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {availableMeetings.map(meeting => (
-              <Card key={meeting.id} className="cursor-pointer hover:bg-muted/50" 
-                    onClick={() => setSelectedMeetingId(meeting.id)}>
+              <Card
+                key={meeting.id}
+                className="cursor-pointer hover:bg-muted/50"
+                onClick={() => setSelectedMeetingId(meeting.id)}
+              >
                 <CardContent className="p-4">
                   <div className="space-y-2">
                     <div className="flex items-start justify-between">
                       <h4 className="font-medium">{meeting.title}</h4>
-                      <Badge variant="secondary">{meeting.agenda.length} TOPs</Badge>
+                      <Badge variant="secondary">
+                        {meeting.agenda.length} TOPs
+                      </Badge>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      {meeting.date.toLocaleDateString('de-DE', { 
+                      {meeting.date.toLocaleDateString('de-DE', {
                         weekday: 'short',
-                        day: '2-digit', 
+                        day: '2-digit',
                         month: '2-digit',
                         year: 'numeric',
                         hour: '2-digit',
-                        minute: '2-digit'
-                      })} • {meeting.location}
+                        minute: '2-digit',
+                      })}{' '}
+                      • {meeting.location}
                     </p>
                   </div>
                 </CardContent>

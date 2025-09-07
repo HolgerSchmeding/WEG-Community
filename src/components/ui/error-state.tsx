@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { AlertTriangle, RefreshCw, Home } from "lucide-react";
-import Link from "next/link";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
+import Link from 'next/link';
 
 interface ErrorStateProps {
   title?: string;
@@ -15,12 +15,12 @@ interface ErrorStateProps {
 }
 
 export function ErrorState({
-  title = "Ein Fehler ist aufgetreten",
-  message = "Entschuldigung, etwas ist schief gelaufen. Bitte versuchen Sie es später erneut.",
+  title = 'Ein Fehler ist aufgetreten',
+  message = 'Entschuldigung, etwas ist schief gelaufen. Bitte versuchen Sie es später erneut.',
   showRetry = true,
   onRetry,
   showHomeButton = false,
-  variant = 'default'
+  variant = 'default',
 }: ErrorStateProps) {
   if (variant === 'compact') {
     return (
@@ -48,10 +48,8 @@ export function ErrorState({
         </CardTitle>
       </CardHeader>
       <CardContent className="text-center space-y-4">
-        <p className="text-muted-foreground">
-          {message}
-        </p>
-        
+        <p className="text-muted-foreground">{message}</p>
+
         <div className="flex flex-col gap-2">
           {showRetry && onRetry && (
             <Button onClick={onRetry} className="w-full">
@@ -59,7 +57,7 @@ export function ErrorState({
               Erneut versuchen
             </Button>
           )}
-          
+
           {showHomeButton && (
             <Button variant="outline" asChild className="w-full">
               <Link href="/">

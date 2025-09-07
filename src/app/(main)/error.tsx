@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { AlertTriangle, RefreshCw } from "lucide-react";
+import { useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { AlertTriangle, RefreshCw } from 'lucide-react';
 
 export default function Error({
   error,
@@ -14,7 +14,7 @@ export default function Error({
 }) {
   useEffect(() => {
     // Log error to monitoring service
-    console.error("Application error:", error);
+    console.error('Application error:', error);
   }, [error]);
 
   return (
@@ -28,7 +28,8 @@ export default function Error({
         </CardHeader>
         <CardContent className="text-center space-y-4">
           <p className="text-muted-foreground">
-            Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.
+            Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es
+            erneut.
           </p>
           {error.digest && (
             <p className="text-xs text-muted-foreground">

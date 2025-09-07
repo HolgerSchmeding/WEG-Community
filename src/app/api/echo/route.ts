@@ -1,4 +1,3 @@
-
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
@@ -7,7 +6,10 @@ export async function POST(req: NextRequest) {
 
     if (!body.message || typeof body.message !== 'string') {
       return NextResponse.json(
-        { error: 'Invalid payload. "message" property must be a non-empty string.' },
+        {
+          error:
+            'Invalid payload. "message" property must be a non-empty string.',
+        },
         { status: 400 }
       );
     }

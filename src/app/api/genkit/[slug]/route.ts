@@ -1,2 +1,27 @@
-// This file is intentionally left blank and will be removed.
-// A specific route is created at /api/genkit/testEcho/route.ts instead.
+import { NextRequest, NextResponse } from 'next/server';
+
+interface Params {
+  params: Promise<{ slug: string }>;
+}
+
+export async function GET(request: NextRequest, context: Params) {
+  const { slug } = await context.params;
+  return NextResponse.json(
+    {
+      message: `Genkit route ${slug} not implemented`,
+      status: 'not_implemented',
+    },
+    { status: 501 }
+  );
+}
+
+export async function POST(request: NextRequest, context: Params) {
+  const { slug } = await context.params;
+  return NextResponse.json(
+    {
+      message: `Genkit route ${slug} not implemented`,
+      status: 'not_implemented',
+    },
+    { status: 501 }
+  );
+}

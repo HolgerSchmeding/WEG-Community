@@ -36,7 +36,7 @@ export function useFormValidation<T extends Record<string, unknown>>({
   schema,
   initialValues = {},
   onSubmit,
-  resetOnSubmit = false
+  resetOnSubmit = false,
 }: UseFormValidationOptions<T>): UseFormValidationReturn<T> {
   const [values, setValuesState] = useState<Partial<T>>(initialValues);
   const [errors, setErrors] = useState<ValidationError[]>([]);
@@ -47,10 +47,10 @@ export function useFormValidation<T extends Record<string, unknown>>({
   const setValue = useCallback(<K extends keyof T>(field: K, value: T[K]) => {
     setValuesState(prev => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
     setIsDirty(true);
-    
+
     // Fehler für dieses Feld löschen wenn Wert geändert wird
     setErrors(prev => prev.filter(error => error.field !== field));
   }, []);
@@ -59,7 +59,7 @@ export function useFormValidation<T extends Record<string, unknown>>({
   const setValues = useCallback((newValues: Partial<T>) => {
     setValuesState(prev => ({
       ...prev,
-      ...newValues
+      ...newValues,
     }));
     setIsDirty(true);
   }, []);
@@ -83,82 +83,99 @@ export function useFormValidation<T extends Record<string, unknown>>({
   }, []);
 
   // Einzelnes Feld validieren
-  const validateField = useCallback((field: keyof T): boolean => {
-    try {
-      // Vollständige Validierung durchführen und nur Fehler für dieses Feld betrachten
-      schema.parse(values);
-      clearError(field);
-      return true;
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        const fieldError = error.errors.find(err => 
-          err.path.length > 0 && err.path[0] === field
-        );
-        if (fieldError) {
-          setError(field, fieldError.message);
-          return false;
-        } else {
-          // Kein Fehler für dieses spezifische Feld
-          clearError(field);
-          return true;
+  const validateField = useCallback(
+    (field: keyof T): boolean => {
+      try {
+        // Vollständige Validierung durchführen und nur Fehler für dieses Feld betrachten
+        schema.parse(values);
+        clearError(field);
+        return true;
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          const fieldError = error.errors.find(
+            err => err.path.length > 0 && err.path[0] === field
+          );
+          if (fieldError) {
+            setError(field, fieldError.message);
+            return false;
+          } else {
+            // Kein Fehler für dieses spezifische Feld
+            clearError(field);
+            return true;
+          }
         }
+        return false;
       }
-      return false;
-    }
-  }, [values, schema, setError, clearError]);
+    },
+    [values, schema, setError, clearError]
+  );
 
   // Gesamtes Formular validieren
-  const validate = useCallback((showErrors: boolean = true): boolean => {
-    try {
-      schema.parse(values);
-      if (showErrors) {
-        clearErrors();
+  const validate = useCallback(
+    (showErrors: boolean = true): boolean => {
+      try {
+        schema.parse(values);
+        if (showErrors) {
+          clearErrors();
+        }
+        return true;
+      } catch (error) {
+        if (error instanceof z.ZodError && showErrors) {
+          const validationErrors: ValidationError[] = error.errors.map(err => ({
+            field: err.path.join('.'),
+            message: err.message,
+          }));
+          setErrors(validationErrors);
+        }
+        return false;
       }
-      return true;
-    } catch (error) {
-      if (error instanceof z.ZodError && showErrors) {
-        const validationErrors: ValidationError[] = error.errors.map(err => ({
-          field: err.path.join('.'),
-          message: err.message
-        }));
-        setErrors(validationErrors);
-      }
-      return false;
-    }
-  }, [values, schema, clearErrors]);
+    },
+    [values, schema, clearErrors]
+  );
 
   // Form Submit Handler
-  const handleSubmit = useCallback(async (e?: React.FormEvent) => {
-    if (e) {
-      e.preventDefault();
-    }
-
-    if (!validate()) {
-      return;
-    }
-
-    if (!onSubmit) {
-      return;
-    }
-
-    setIsSubmitting(true);
-    
-    try {
-      const validatedData = schema.parse(values) as T;
-      await onSubmit(validatedData);
-      
-      if (resetOnSubmit) {
-        setValuesState(initialValues);
-        setIsDirty(false);
-        clearErrors();
+  const handleSubmit = useCallback(
+    async (e?: React.FormEvent) => {
+      if (e) {
+        e.preventDefault();
       }
-    } catch (error) {
-      console.error('Form submission error:', error);
-      // Hier könnten zusätzliche Error-Handling-Logiken stehen
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [validate, onSubmit, schema, values, resetOnSubmit, initialValues, clearErrors]);
+
+      if (!validate()) {
+        return;
+      }
+
+      if (!onSubmit) {
+        return;
+      }
+
+      setIsSubmitting(true);
+
+      try {
+        const validatedData = schema.parse(values) as T;
+        await onSubmit(validatedData);
+
+        if (resetOnSubmit) {
+          setValuesState(initialValues);
+          setIsDirty(false);
+          clearErrors();
+        }
+      } catch (error) {
+        console.error('Form submission error:', error);
+        // Hier könnten zusätzliche Error-Handling-Logiken stehen
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [
+      validate,
+      onSubmit,
+      schema,
+      values,
+      resetOnSubmit,
+      initialValues,
+      clearErrors,
+    ]
+  );
 
   // Formular zurücksetzen
   const reset = useCallback(() => {
@@ -169,13 +186,19 @@ export function useFormValidation<T extends Record<string, unknown>>({
   }, [initialValues]);
 
   // Hilfsfunktionen für Fehler
-  const getFieldError = useCallback((field: keyof T): string | undefined => {
-    return errors.find(error => error.field === field)?.message;
-  }, [errors]);
+  const getFieldError = useCallback(
+    (field: keyof T): string | undefined => {
+      return errors.find(error => error.field === field)?.message;
+    },
+    [errors]
+  );
 
-  const hasFieldError = useCallback((field: keyof T): boolean => {
-    return errors.some(error => error.field === field);
-  }, [errors]);
+  const hasFieldError = useCallback(
+    (field: keyof T): boolean => {
+      return errors.some(error => error.field === field);
+    },
+    [errors]
+  );
 
   const isValid = errors.length === 0 && Object.keys(values).length > 0;
 
@@ -195,23 +218,37 @@ export function useFormValidation<T extends Record<string, unknown>>({
     handleSubmit,
     reset,
     getFieldError,
-    hasFieldError
+    hasFieldError,
   };
 }
 
 // Hilfsfunktionen für gemeinsame Validierungs-Schemas
 export const validationSchemas = {
-  email: z.string().email("Gültige E-Mail-Adresse erforderlich"),
-  phone: z.string().regex(/^(\+49|0)[1-9]\d{8,11}$/, "Gültige deutsche Telefonnummer erforderlich"),
-  required: (message: string = "Dieses Feld ist erforderlich") => z.string().min(1, message),
-  minLength: (min: number, message?: string) => 
+  email: z.string().email('Gültige E-Mail-Adresse erforderlich'),
+  phone: z
+    .string()
+    .regex(
+      /^(\+49|0)[1-9]\d{8,11}$/,
+      'Gültige deutsche Telefonnummer erforderlich'
+    ),
+  required: (message: string = 'Dieses Feld ist erforderlich') =>
+    z.string().min(1, message),
+  minLength: (min: number, message?: string) =>
     z.string().min(min, message || `Mindestens ${min} Zeichen erforderlich`),
-  maxLength: (max: number, message?: string) => 
+  maxLength: (max: number, message?: string) =>
     z.string().max(max, message || `Maximal ${max} Zeichen erlaubt`),
-  fileSize: (maxSizeInMB: number) => 
-    z.instanceof(File).refine((file) => file.size <= maxSizeInMB * 1024 * 1024, 
-      `Datei darf maximal ${maxSizeInMB}MB groß sein`),
+  fileSize: (maxSizeInMB: number) =>
+    z
+      .instanceof(File)
+      .refine(
+        file => file.size <= maxSizeInMB * 1024 * 1024,
+        `Datei darf maximal ${maxSizeInMB}MB groß sein`
+      ),
   fileType: (allowedTypes: string[]) =>
-    z.instanceof(File).refine((file) => allowedTypes.includes(file.type),
-      `Nur folgende Dateitypen erlaubt: ${allowedTypes.join(', ')}`)
+    z
+      .instanceof(File)
+      .refine(
+        file => allowedTypes.includes(file.type),
+        `Nur folgende Dateitypen erlaubt: ${allowedTypes.join(', ')}`
+      ),
 };

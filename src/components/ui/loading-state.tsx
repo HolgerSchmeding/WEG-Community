@@ -1,11 +1,17 @@
-"use client";
+'use client';
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Loader2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-export type LoadingType = 'spinner' | 'skeleton' | 'cards' | 'table' | 'list' | 'detail';
+export type LoadingType =
+  | 'spinner'
+  | 'skeleton'
+  | 'cards'
+  | 'table'
+  | 'list'
+  | 'detail';
 export type LoadingSize = 'sm' | 'md' | 'lg' | 'xl';
 
 interface LoadingStateProps {
@@ -19,33 +25,34 @@ interface LoadingStateProps {
   overlay?: boolean;
 }
 
-export function LoadingState({ 
-  type = 'cards', 
+export function LoadingState({
+  type = 'cards',
   size = 'md',
-  items = 6, 
-  title, 
+  items = 6,
+  title,
   text,
   className,
   fullScreen = false,
-  overlay = false
+  overlay = false,
 }: LoadingStateProps) {
   const sizeClasses = {
-    sm: "h-4 w-4",
-    md: "h-6 w-6", 
-    lg: "h-8 w-8",
-    xl: "h-12 w-12"
+    sm: 'h-4 w-4',
+    md: 'h-6 w-6',
+    lg: 'h-8 w-8',
+    xl: 'h-12 w-12',
   };
 
   const textSizeClasses = {
-    sm: "text-sm",
-    md: "text-base",
-    lg: "text-lg", 
-    xl: "text-xl"
+    sm: 'text-sm',
+    md: 'text-base',
+    lg: 'text-lg',
+    xl: 'text-xl',
   };
 
   const containerClasses = cn(
-    fullScreen && "min-h-screen w-full flex items-center justify-center",
-    overlay && "absolute inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center",
+    fullScreen && 'min-h-screen w-full flex items-center justify-center',
+    overlay &&
+      'absolute inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center',
     className
   );
 
@@ -54,9 +61,16 @@ export function LoadingState({
     return (
       <div className={containerClasses}>
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className={cn("animate-spin text-primary", sizeClasses[size])} />
+          <Loader2
+            className={cn('animate-spin text-primary', sizeClasses[size])}
+          />
           {text && (
-            <p className={cn("text-muted-foreground animate-pulse", textSizeClasses[size])}>
+            <p
+              className={cn(
+                'text-muted-foreground animate-pulse',
+                textSizeClasses[size]
+              )}
+            >
               {text}
             </p>
           )}
@@ -96,7 +110,7 @@ export function LoadingState({
   // Table Loading
   if (type === 'table') {
     return (
-      <div className={cn("space-y-4", containerClasses)}>
+      <div className={cn('space-y-4', containerClasses)}>
         {title && <Skeleton className="h-8 w-48" />}
         <div className="rounded-md border">
           <div className="border-b p-4">
@@ -123,10 +137,13 @@ export function LoadingState({
   // List Loading
   if (type === 'list') {
     return (
-      <div className={cn("space-y-4", containerClasses)}>
+      <div className={cn('space-y-4', containerClasses)}>
         {title && <Skeleton className="h-8 w-48" />}
         {Array.from({ length: items }).map((_, i) => (
-          <div key={i} className="flex items-center space-x-3 p-3 border rounded-lg">
+          <div
+            key={i}
+            className="flex items-center space-x-3 p-3 border rounded-lg"
+          >
             <Skeleton className="h-12 w-12 rounded-full" />
             <div className="space-y-2 flex-1">
               <Skeleton className="h-4 w-3/4" />
@@ -162,7 +179,7 @@ export function LoadingState({
 
   // Default: Cards Loading
   return (
-    <div className={cn("space-y-6", containerClasses)}>
+    <div className={cn('space-y-6', containerClasses)}>
       {title && <Skeleton className="h-8 w-48" />}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {Array.from({ length: items }).map((_, i) => (
@@ -183,32 +200,31 @@ export function LoadingState({
 }
 
 // Specialized Loading Components for common use cases
-export function PageLoadingState({ text = "Seite wird geladen..." }: { text?: string }) {
-  return (
-    <LoadingState 
-      type="spinner" 
-      size="lg" 
-      text={text}
-      fullScreen 
-    />
-  );
+export function PageLoadingState({
+  text = 'Seite wird geladen...',
+}: {
+  text?: string;
+}) {
+  return <LoadingState type="spinner" size="lg" text={text} fullScreen />;
 }
 
 export function ComponentLoadingState({ text }: { text?: string }) {
-  return (
-    <LoadingState 
-      type="spinner" 
-      size="md" 
-      text={text}
-      className="py-8"
-    />
-  );
+  return <LoadingState type="spinner" size="md" text={text} className="py-8" />;
 }
 
 export function ButtonLoadingState({ size = 'sm' }: { size?: LoadingSize }) {
-  return <Loader2 className={cn("animate-spin", 
-    size === 'sm' ? 'h-4 w-4' : 
-    size === 'md' ? 'h-5 w-5' :
-    size === 'lg' ? 'h-6 w-6' : 'h-8 w-8'
-  )} />;
+  return (
+    <Loader2
+      className={cn(
+        'animate-spin',
+        size === 'sm'
+          ? 'h-4 w-4'
+          : size === 'md'
+            ? 'h-5 w-5'
+            : size === 'lg'
+              ? 'h-6 w-6'
+              : 'h-8 w-8'
+      )}
+    />
+  );
 }

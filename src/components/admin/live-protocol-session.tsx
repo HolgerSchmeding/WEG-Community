@@ -9,23 +9,28 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Label } from '@/components/ui/label';
-import { 
-  Play, 
-  Pause, 
-  Square, 
-  ChevronLeft, 
-  ChevronRight, 
-  Users, 
-  Clock, 
-  CheckCircle, 
+import {
+  Play,
+  Pause,
+  Square,
+  ChevronLeft,
+  ChevronRight,
+  Users,
+  Clock,
+  CheckCircle,
   XCircle,
   AlertTriangle,
   Sparkles,
   Save,
   Timer,
-  Edit3
+  Edit3,
 } from 'lucide-react';
-import { LiveProtocolSession, LiveProtocolItem, VotingResult, DecisionResult } from '@/lib/types';
+import {
+  LiveProtocolSession,
+  LiveProtocolItem,
+  VotingResult,
+  DecisionResult,
+} from '@/lib/types';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 
@@ -34,13 +39,16 @@ interface LiveProtocolSessionProps {
   onUpdateSession: (session: LiveProtocolSession) => void;
 }
 
-export function LiveProtocolSessionComponent({ session, onUpdateSession }: LiveProtocolSessionProps) {
+export function LiveProtocolSessionComponent({
+  session,
+  onUpdateSession,
+}: LiveProtocolSessionProps) {
   const [discussionInput, setDiscussionInput] = useState('');
   const [keywordsInput, setKeywordsInput] = useState('');
   const [votingInput, setVotingInput] = useState({
     votesFor: '',
     votesAgainst: '',
-    abstentions: ''
+    abstentions: '',
   });
   const [decisionInput, setDecisionInput] = useState('');
   const [aiGeneratedText, setAiGeneratedText] = useState('');
@@ -54,55 +62,66 @@ export function LiveProtocolSessionComponent({ session, onUpdateSession }: LiveP
   const currentVoters = currentItem.currentVoters || session.totalVoters;
 
   // Automatische Validierung der Abstimmung
-  const validateVoting = (votesFor: number, votesAgainst: number, abstentions: number, totalVoters: number): boolean => {
+  const validateVoting = (
+    votesFor: number,
+    votesAgainst: number,
+    abstentions: number,
+    totalVoters: number
+  ): boolean => {
     const total = votesFor + votesAgainst + abstentions;
     return total === totalVoters;
   };
 
-  const handleStatusChange = (newStatus: "Vorbereitung" | "Laufend" | "Pausiert" | "Abgeschlossen") => {
+  const handleStatusChange = (
+    newStatus: 'Vorbereitung' | 'Laufend' | 'Pausiert' | 'Abgeschlossen'
+  ) => {
     const updatedSession = {
       ...session,
       status: newStatus,
-      startTime: newStatus === "Laufend" && !session.startTime ? new Date() : session.startTime,
-      endTime: newStatus === "Abgeschlossen" ? new Date() : undefined
+      startTime:
+        newStatus === 'Laufend' && !session.startTime
+          ? new Date()
+          : session.startTime,
+      endTime: newStatus === 'Abgeschlossen' ? new Date() : undefined,
     };
     onUpdateSession(updatedSession);
   };
 
   const handleNavigateTop = (direction: 'prev' | 'next') => {
-    const newIndex = direction === 'prev' 
-      ? Math.max(0, session.currentTopIndex - 1)
-      : Math.min(session.items.length - 1, session.currentTopIndex + 1);
-    
+    const newIndex =
+      direction === 'prev'
+        ? Math.max(0, session.currentTopIndex - 1)
+        : Math.min(session.items.length - 1, session.currentTopIndex + 1);
+
     const updatedSession = {
       ...session,
-      currentTopIndex: newIndex
+      currentTopIndex: newIndex,
     };
     onUpdateSession(updatedSession);
-    
+
     // Reset input fields when switching TOPs
     const newCurrentItem = session.items[newIndex];
     setDiscussionInput(newCurrentItem.discussion || '');
     setKeywordsInput(newCurrentItem.keywords || '');
     setDecisionInput(newCurrentItem.decision || '');
-    setCurrentVotersInput((newCurrentItem.currentVoters || session.totalVoters).toString());
+    setCurrentVotersInput(
+      (newCurrentItem.currentVoters || session.totalVoters).toString()
+    );
     setVotingInput({
       votesFor: newCurrentItem.votingResult?.votesFor.toString() || '',
       votesAgainst: newCurrentItem.votingResult?.votesAgainst.toString() || '',
-      abstentions: newCurrentItem.votingResult?.abstentions.toString() || ''
+      abstentions: newCurrentItem.votingResult?.abstentions.toString() || '',
     });
   };
 
   const handleUpdateCurrentItem = (updates: Partial<LiveProtocolItem>) => {
-    const updatedItems = session.items.map((item, index) => 
-      index === session.currentTopIndex 
-        ? { ...item, ...updates }
-        : item
+    const updatedItems = session.items.map((item, index) =>
+      index === session.currentTopIndex ? { ...item, ...updates } : item
     );
-    
+
     const updatedSession = {
       ...session,
-      items: updatedItems
+      items: updatedItems,
     };
     onUpdateSession(updatedSession);
   };
@@ -112,12 +131,12 @@ export function LiveProtocolSessionComponent({ session, onUpdateSession }: LiveP
     if (newVoters > 0) {
       handleUpdateCurrentItem({ currentVoters: newVoters });
       setIsEditingVoters(false);
-      
+
       // Reset voting inputs wenn sich Stimmberechtigte ändern
       setVotingInput({
         votesFor: '',
         votesAgainst: '',
-        abstentions: ''
+        abstentions: '',
       });
     }
   };
@@ -126,38 +145,43 @@ export function LiveProtocolSessionComponent({ session, onUpdateSession }: LiveP
     const votesFor = parseInt(votingInput.votesFor) || 0;
     const votesAgainst = parseInt(votingInput.votesAgainst) || 0;
     const abstentions = parseInt(votingInput.abstentions) || 0;
-    
-    const isValid = validateVoting(votesFor, votesAgainst, abstentions, currentVoters);
-    
+
+    const isValid = validateVoting(
+      votesFor,
+      votesAgainst,
+      abstentions,
+      currentVoters
+    );
+
     const votingResult: VotingResult = {
       votesFor,
       votesAgainst,
       abstentions,
       totalVoters: currentVoters,
-      isValid
+      isValid,
     };
 
     // Automatische Entscheidung basierend auf Abstimmung
-    let decisionResult: DecisionResult = "Keine Abstimmung";
+    let decisionResult: DecisionResult = 'Keine Abstimmung';
     if (votesFor > votesAgainst) {
-      decisionResult = "Angenommen";
+      decisionResult = 'Angenommen';
     } else if (votesAgainst > votesFor) {
-      decisionResult = "Abgelehnt";
+      decisionResult = 'Abgelehnt';
     } else if (votesFor === votesAgainst && votesFor > 0) {
-      decisionResult = "Vertagt"; // Bei Gleichstand
+      decisionResult = 'Vertagt'; // Bei Gleichstand
     }
 
     handleUpdateCurrentItem({
       votingResult,
       decisionResult,
       decision: decisionInput,
-      endTime: new Date()
+      endTime: new Date(),
     });
   };
 
   const handleImproveWithAI = async () => {
     if (!keywordsInput.trim()) return;
-    
+
     setIsImprovingText(true);
     try {
       const response = await fetch('/api/protocol/improve', {
@@ -166,8 +190,8 @@ export function LiveProtocolSessionComponent({ session, onUpdateSession }: LiveP
         body: JSON.stringify({
           keywords: keywordsInput,
           context: currentItem.title,
-          discussion: discussionInput
-        })
+          discussion: discussionInput,
+        }),
       });
 
       if (response.ok) {
@@ -185,36 +209,36 @@ export function LiveProtocolSessionComponent({ session, onUpdateSession }: LiveP
 
   const handleGenerateAIText = async () => {
     if (!keywordsInput.trim()) return;
-    
+
     setIsGeneratingAI(true);
     try {
       // Simuliere KI-Textgenerierung mit realen Inhalten
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
+
       // Sammle verfügbare Informationen
       const topTitle = currentItem.title;
       const topDescription = currentItem.description || '';
       const currentDiscussion = discussionInput.trim();
       const keywords = keywordsInput.trim();
-      
+
       // Generiere intelligenten Text basierend auf Eingaben
       let discussionText = '';
       let beschlussText = '';
-      
+
       if (currentDiscussion) {
         discussionText = `${currentDiscussion}\n\nZusätzlich wurden folgende Punkte besprochen: ${keywords}. Die Diskussion verlief konstruktiv und alle wesentlichen Aspekte wurden eingehend erörtert.`;
       } else {
         discussionText = `Zu "${topTitle}" wurde eine ausführliche Diskussion geführt. Schwerpunkte waren: ${keywords}. ${topDescription ? `Hintergrund: ${topDescription}` : ''} Alle Anwesenden konnten ihre Meinungen und Bedenken äußern.`;
       }
-      
+
       if (currentItem.requiresVoting) {
         beschlussText = `Nach eingehender Beratung wird folgender Beschluss gefasst:\n\nBeschluss zu "${topTitle}":\nDie Versammlung beschließt bezüglich ${keywords.toLowerCase()}. ${topDescription ? `Grundlage: ${topDescription}` : ''}\n\nDieser Beschluss wird zur Abstimmung gestellt.`;
       } else {
         beschlussText = `Zu "${topTitle}" wird festgehalten:\n\n${keywords ? `Die besprochenen Punkte (${keywords}) werden zur Kenntnis genommen.` : 'Die Informationen werden zur Kenntnis genommen.'} ${topDescription ? `Hintergrund: ${topDescription}` : ''}\n\nKeine weitere Abstimmung erforderlich.`;
       }
-      
+
       const generatedText = `Diskussion:\n${discussionText}\n\nBeschluss:\n${beschlussText}`;
-      
+
       setAiGeneratedText(generatedText);
     } catch (error) {
       console.error('Fehler bei KI-Textgenerierung:', error);
@@ -225,38 +249,44 @@ export function LiveProtocolSessionComponent({ session, onUpdateSession }: LiveP
 
   const handleUseAIText = () => {
     if (!aiGeneratedText) return;
-    
+
     // Extrahiere Diskussion und Beschluss aus dem generierten Text
     const sections = aiGeneratedText.split('\n\nBeschluss:\n');
-    
+
     if (sections.length >= 2) {
       const discussionSection = sections[0].replace('Diskussion:\n', '').trim();
       const beschlussSection = sections[1].trim();
-      
+
       setDiscussionInput(discussionSection);
       setDecisionInput(beschlussSection);
-      
+
       // Update das aktuelle Item
       handleUpdateCurrentItem({
         discussion: discussionSection,
-        decision: beschlussSection
+        decision: beschlussSection,
       });
     }
-    
+
     // Clear den AI Text nach Übernahme
     setAiGeneratedText('');
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "Laufend": return "bg-green-500";
-      case "Pausiert": return "bg-yellow-500";
-      case "Abgeschlossen": return "bg-blue-500";
-      default: return "bg-gray-500";
+      case 'Laufend':
+        return 'bg-green-500';
+      case 'Pausiert':
+        return 'bg-yellow-500';
+      case 'Abgeschlossen':
+        return 'bg-blue-500';
+      default:
+        return 'bg-gray-500';
     }
   };
 
-  const completedTopCount = session.items.filter(item => item.isCompleted).length;
+  const completedTopCount = session.items.filter(
+    item => item.isCompleted
+  ).length;
   const progress = (completedTopCount / session.items.length) * 100;
 
   React.useEffect(() => {
@@ -268,7 +298,7 @@ export function LiveProtocolSessionComponent({ session, onUpdateSession }: LiveP
     setVotingInput({
       votesFor: currentItem.votingResult?.votesFor.toString() || '',
       votesAgainst: currentItem.votingResult?.votesAgainst.toString() || '',
-      abstentions: currentItem.votingResult?.abstentions.toString() || ''
+      abstentions: currentItem.votingResult?.abstentions.toString() || '',
     });
   }, [currentItem, currentVoters]);
 
@@ -284,9 +314,9 @@ export function LiveProtocolSessionComponent({ session, onUpdateSession }: LiveP
                 Live-Protokoll: {session.meetingTitle}
               </CardTitle>
               <p className="text-sm text-muted-foreground mt-1">
-                {format(session.meetingDate, 'PPP', { locale: de })} • 
-                Versammlungsleiter: {session.chairperson} • 
-                Protokollführer: {session.secretary}
+                {format(session.meetingDate, 'PPP', { locale: de })} •
+                Versammlungsleiter: {session.chairperson} • Protokollführer:{' '}
+                {session.secretary}
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -303,24 +333,24 @@ export function LiveProtocolSessionComponent({ session, onUpdateSession }: LiveP
         <CardContent>
           {/* Session Controls */}
           <div className="flex items-center gap-2 mb-4">
-            <Button 
-              onClick={() => handleStatusChange("Laufend")}
-              variant={session.status === "Laufend" ? "default" : "outline"}
+            <Button
+              onClick={() => handleStatusChange('Laufend')}
+              variant={session.status === 'Laufend' ? 'default' : 'outline'}
               size="sm"
             >
               <Play className="h-4 w-4 mr-1" />
               Start
             </Button>
-            <Button 
-              onClick={() => handleStatusChange("Pausiert")}
-              variant={session.status === "Pausiert" ? "default" : "outline"}
+            <Button
+              onClick={() => handleStatusChange('Pausiert')}
+              variant={session.status === 'Pausiert' ? 'default' : 'outline'}
               size="sm"
             >
               <Pause className="h-4 w-4 mr-1" />
               Pause
             </Button>
-            <Button 
-              onClick={() => handleStatusChange("Abgeschlossen")}
+            <Button
+              onClick={() => handleStatusChange('Abgeschlossen')}
               variant="outline"
               size="sm"
             >
@@ -333,11 +363,13 @@ export function LiveProtocolSessionComponent({ session, onUpdateSession }: LiveP
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span>Fortschritt</span>
-              <span>{completedTopCount} von {session.items.length} TOP abgeschlossen</span>
+              <span>
+                {completedTopCount} von {session.items.length} TOP abgeschlossen
+              </span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
-              <div 
-                className="bg-blue-600 h-2 rounded-full transition-all duration-300" 
+              <div
+                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                 style={{ width: `${progress}%` }}
               ></div>
             </div>
@@ -360,10 +392,10 @@ export function LiveProtocolSessionComponent({ session, onUpdateSession }: LiveP
               )}
             </div>
             <div className="flex items-center gap-2">
-              <Button 
+              <Button
                 onClick={() => handleNavigateTop('prev')}
                 disabled={session.currentTopIndex === 0}
-                variant="outline" 
+                variant="outline"
                 size="sm"
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -371,10 +403,10 @@ export function LiveProtocolSessionComponent({ session, onUpdateSession }: LiveP
               <Badge variant="secondary">
                 {session.currentTopIndex + 1} von {session.items.length}
               </Badge>
-              <Button 
+              <Button
                 onClick={() => handleNavigateTop('next')}
                 disabled={session.currentTopIndex === session.items.length - 1}
-                variant="outline" 
+                variant="outline"
                 size="sm"
               >
                 <ChevronRight className="h-4 w-4" />
@@ -387,15 +419,17 @@ export function LiveProtocolSessionComponent({ session, onUpdateSession }: LiveP
           <div className="flex items-center gap-4 p-3 bg-muted/30 rounded-lg">
             <div className="flex items-center gap-2">
               <Users className="h-4 w-4" />
-              <span className="text-sm font-medium">Stimmberechtigte für diesen TOP:</span>
+              <span className="text-sm font-medium">
+                Stimmberechtigte für diesen TOP:
+              </span>
             </div>
             {!isEditingVoters ? (
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="px-3 py-1">
                   {currentVoters}
                 </Badge>
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   variant="ghost"
                   onClick={() => setIsEditingVoters(true)}
                 >
@@ -408,14 +442,18 @@ export function LiveProtocolSessionComponent({ session, onUpdateSession }: LiveP
                 <Input
                   type="number"
                   value={currentVotersInput}
-                  onChange={(e) => setCurrentVotersInput(e.target.value)}
+                  onChange={e => setCurrentVotersInput(e.target.value)}
                   className="w-20"
                   min="1"
                 />
                 <Button size="sm" onClick={handleUpdateCurrentVoters}>
                   <Save className="h-3 w-3" />
                 </Button>
-                <Button size="sm" variant="outline" onClick={() => setIsEditingVoters(false)}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setIsEditingVoters(false)}
+                >
                   ✕
                 </Button>
               </div>
@@ -431,8 +469,10 @@ export function LiveProtocolSessionComponent({ session, onUpdateSession }: LiveP
             <Textarea
               ref={discussionRef}
               value={discussionInput}
-              onChange={(e) => setDiscussionInput(e.target.value)}
-              onBlur={() => handleUpdateCurrentItem({ discussion: discussionInput })}
+              onChange={e => setDiscussionInput(e.target.value)}
+              onBlur={() =>
+                handleUpdateCurrentItem({ discussion: discussionInput })
+              }
               placeholder="Live-Notizen während der Diskussion eingeben..."
               className="min-h-32"
             />
@@ -445,21 +485,23 @@ export function LiveProtocolSessionComponent({ session, onUpdateSession }: LiveP
                 <Sparkles className="h-4 w-4 text-purple-600" />
                 Stichworte für den Protokoll Text
               </h4>
-              <Button 
+              <Button
                 onClick={handleGenerateAIText}
                 disabled={!keywordsInput.trim() || isGeneratingAI}
                 className="bg-purple-600 hover:bg-purple-700 text-white"
                 size="sm"
               >
                 <Sparkles className="h-4 w-4 mr-1" />
-                {isGeneratingAI ? "Generiere..." : "KI-Text generieren"}
+                {isGeneratingAI ? 'Generiere...' : 'KI-Text generieren'}
               </Button>
             </div>
-            
+
             <Input
               value={keywordsInput}
-              onChange={(e) => setKeywordsInput(e.target.value)}
-              onBlur={() => handleUpdateCurrentItem({ keywords: keywordsInput })}
+              onChange={e => setKeywordsInput(e.target.value)}
+              onBlur={() =>
+                handleUpdateCurrentItem({ keywords: keywordsInput })
+              }
               placeholder="z.B. Dachsanierung, 45.000€, einstimmig beschlossen..."
               className="w-full"
             />
@@ -468,7 +510,9 @@ export function LiveProtocolSessionComponent({ session, onUpdateSession }: LiveP
             {aiGeneratedText && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label className="text-sm font-medium text-purple-700">KI-Textvorschlag</Label>
+                  <Label className="text-sm font-medium text-purple-700">
+                    KI-Textvorschlag
+                  </Label>
                   <Button
                     variant="outline"
                     size="sm"
@@ -479,7 +523,9 @@ export function LiveProtocolSessionComponent({ session, onUpdateSession }: LiveP
                   </Button>
                 </div>
                 <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg">
-                  <pre className="text-sm text-purple-800 whitespace-pre-wrap font-sans">{aiGeneratedText}</pre>
+                  <pre className="text-sm text-purple-800 whitespace-pre-wrap font-sans">
+                    {aiGeneratedText}
+                  </pre>
                 </div>
               </div>
             )}
@@ -490,8 +536,10 @@ export function LiveProtocolSessionComponent({ session, onUpdateSession }: LiveP
             <h4 className="font-semibold">Beschluss-Text</h4>
             <Textarea
               value={decisionInput}
-              onChange={(e) => setDecisionInput(e.target.value)}
-              onBlur={() => handleUpdateCurrentItem({ decision: decisionInput })}
+              onChange={e => setDecisionInput(e.target.value)}
+              onBlur={() =>
+                handleUpdateCurrentItem({ decision: decisionInput })
+              }
               placeholder="Beschluss-Text eingeben..."
               rows={3}
             />
@@ -504,10 +552,12 @@ export function LiveProtocolSessionComponent({ session, onUpdateSession }: LiveP
                 <Users className="h-4 w-4" />
                 Abstimmung
               </h4>
-              
+
               <div className="grid grid-cols-5 gap-3">
                 <div>
-                  <Label className="text-sm font-medium text-blue-600">Stimmberechtigte</Label>
+                  <Label className="text-sm font-medium text-blue-600">
+                    Stimmberechtigte
+                  </Label>
                   <Input
                     type="number"
                     value={currentVoters}
@@ -516,33 +566,54 @@ export function LiveProtocolSessionComponent({ session, onUpdateSession }: LiveP
                   />
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-green-600">Ja-Stimmen</Label>
+                  <Label className="text-sm font-medium text-green-600">
+                    Ja-Stimmen
+                  </Label>
                   <Input
                     type="number"
                     value={votingInput.votesFor}
-                    onChange={(e) => setVotingInput(prev => ({ ...prev, votesFor: e.target.value }))}
+                    onChange={e =>
+                      setVotingInput(prev => ({
+                        ...prev,
+                        votesFor: e.target.value,
+                      }))
+                    }
                     placeholder="0"
                     min="0"
                     max={currentVoters}
                   />
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-red-600">Nein-Stimmen</Label>
+                  <Label className="text-sm font-medium text-red-600">
+                    Nein-Stimmen
+                  </Label>
                   <Input
                     type="number"
                     value={votingInput.votesAgainst}
-                    onChange={(e) => setVotingInput(prev => ({ ...prev, votesAgainst: e.target.value }))}
+                    onChange={e =>
+                      setVotingInput(prev => ({
+                        ...prev,
+                        votesAgainst: e.target.value,
+                      }))
+                    }
                     placeholder="0"
                     min="0"
                     max={currentVoters}
                   />
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-600">Enthaltungen</Label>
+                  <Label className="text-sm font-medium text-gray-600">
+                    Enthaltungen
+                  </Label>
                   <Input
                     type="number"
                     value={votingInput.abstentions}
-                    onChange={(e) => setVotingInput(prev => ({ ...prev, abstentions: e.target.value }))}
+                    onChange={e =>
+                      setVotingInput(prev => ({
+                        ...prev,
+                        abstentions: e.target.value,
+                      }))
+                    }
                     placeholder="0"
                     min="0"
                     max={currentVoters}
@@ -557,13 +628,21 @@ export function LiveProtocolSessionComponent({ session, onUpdateSession }: LiveP
               </div>
 
               {/* Validation Alert */}
-              {votingInput.votesFor || votingInput.votesAgainst || votingInput.abstentions ? (
-                <Alert className={validateVoting(
-                  parseInt(votingInput.votesFor) || 0,
-                  parseInt(votingInput.votesAgainst) || 0,
-                  parseInt(votingInput.abstentions) || 0,
-                  currentVoters
-                ) ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"}>
+              {votingInput.votesFor ||
+              votingInput.votesAgainst ||
+              votingInput.abstentions ? (
+                <Alert
+                  className={
+                    validateVoting(
+                      parseInt(votingInput.votesFor) || 0,
+                      parseInt(votingInput.votesAgainst) || 0,
+                      parseInt(votingInput.abstentions) || 0,
+                      currentVoters
+                    )
+                      ? 'border-green-200 bg-green-50'
+                      : 'border-red-200 bg-red-50'
+                  }
+                >
                   <AlertTriangle className="h-4 w-4" />
                   <AlertDescription>
                     {validateVoting(
@@ -573,11 +652,19 @@ export function LiveProtocolSessionComponent({ session, onUpdateSession }: LiveP
                       currentVoters
                     ) ? (
                       <span className="text-green-700">
-                        ✓ Stimmen korrekt: {(parseInt(votingInput.votesFor) || 0) + (parseInt(votingInput.votesAgainst) || 0) + (parseInt(votingInput.abstentions) || 0)} = {currentVoters} Stimmberechtigte
+                        ✓ Stimmen korrekt:{' '}
+                        {(parseInt(votingInput.votesFor) || 0) +
+                          (parseInt(votingInput.votesAgainst) || 0) +
+                          (parseInt(votingInput.abstentions) || 0)}{' '}
+                        = {currentVoters} Stimmberechtigte
                       </span>
                     ) : (
                       <span className="text-red-700">
-                        ⚠ Prüfung: {(parseInt(votingInput.votesFor) || 0) + (parseInt(votingInput.votesAgainst) || 0) + (parseInt(votingInput.abstentions) || 0)} ≠ {currentVoters} Stimmberechtigte
+                        ⚠ Prüfung:{' '}
+                        {(parseInt(votingInput.votesFor) || 0) +
+                          (parseInt(votingInput.votesAgainst) || 0) +
+                          (parseInt(votingInput.abstentions) || 0)}{' '}
+                        ≠ {currentVoters} Stimmberechtigte
                       </span>
                     )}
                   </AlertDescription>
@@ -589,29 +676,48 @@ export function LiveProtocolSessionComponent({ session, onUpdateSession }: LiveP
                 <div className="p-4 border rounded-lg bg-gray-50">
                   <div className="flex items-center justify-between mb-3">
                     <h5 className="font-medium">Abstimmungsergebnis</h5>
-                    <Badge className={currentItem.decisionResult === "Angenommen" ? "bg-green-500" : 
-                                   currentItem.decisionResult === "Abgelehnt" ? "bg-red-500" : "bg-yellow-500"}>
-                      {currentItem.decisionResult === "Angenommen" ? <CheckCircle className="h-3 w-3 mr-1" /> :
-                       currentItem.decisionResult === "Abgelehnt" ? <XCircle className="h-3 w-3 mr-1" /> :
-                       <AlertTriangle className="h-3 w-3 mr-1" />}
+                    <Badge
+                      className={
+                        currentItem.decisionResult === 'Angenommen'
+                          ? 'bg-green-500'
+                          : currentItem.decisionResult === 'Abgelehnt'
+                            ? 'bg-red-500'
+                            : 'bg-yellow-500'
+                      }
+                    >
+                      {currentItem.decisionResult === 'Angenommen' ? (
+                        <CheckCircle className="h-3 w-3 mr-1" />
+                      ) : currentItem.decisionResult === 'Abgelehnt' ? (
+                        <XCircle className="h-3 w-3 mr-1" />
+                      ) : (
+                        <AlertTriangle className="h-3 w-3 mr-1" />
+                      )}
                       {currentItem.decisionResult}
                     </Badge>
                   </div>
                   <div className="grid grid-cols-4 gap-4 text-center">
                     <div className="text-green-600">
-                      <div className="text-xl font-bold">{currentItem.votingResult.votesFor}</div>
+                      <div className="text-xl font-bold">
+                        {currentItem.votingResult.votesFor}
+                      </div>
                       <div className="text-sm">Ja-Stimmen</div>
                     </div>
                     <div className="text-red-600">
-                      <div className="text-xl font-bold">{currentItem.votingResult.votesAgainst}</div>
+                      <div className="text-xl font-bold">
+                        {currentItem.votingResult.votesAgainst}
+                      </div>
                       <div className="text-sm">Nein-Stimmen</div>
                     </div>
                     <div className="text-gray-600">
-                      <div className="text-xl font-bold">{currentItem.votingResult.abstentions}</div>
+                      <div className="text-xl font-bold">
+                        {currentItem.votingResult.abstentions}
+                      </div>
                       <div className="text-sm">Enthaltungen</div>
                     </div>
                     <div className="text-blue-600">
-                      <div className="text-xl font-bold">{currentItem.votingResult.totalVoters}</div>
+                      <div className="text-xl font-bold">
+                        {currentItem.votingResult.totalVoters}
+                      </div>
                       <div className="text-sm">Gesamt</div>
                     </div>
                   </div>
@@ -625,18 +731,23 @@ export function LiveProtocolSessionComponent({ session, onUpdateSession }: LiveP
             <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
               <div className="flex items-center gap-2 text-blue-700">
                 <AlertTriangle className="h-4 w-4" />
-                <span className="text-sm font-medium">Dieser TOP ist nur zur Information/Diskussion - keine Abstimmung geplant.</span>
+                <span className="text-sm font-medium">
+                  Dieser TOP ist nur zur Information/Diskussion - keine
+                  Abstimmung geplant.
+                </span>
               </div>
             </div>
           )}
 
-          <Button 
+          <Button
             onClick={() => handleUpdateCurrentItem({ isCompleted: true })}
             disabled={currentItem.isCompleted}
             className="w-full mt-6"
           >
             <CheckCircle className="h-4 w-4 mr-2" />
-            {currentItem.isCompleted ? 'TOP abgeschlossen' : 'TOP als abgeschlossen markieren'}
+            {currentItem.isCompleted
+              ? 'TOP abgeschlossen'
+              : 'TOP als abgeschlossen markieren'}
           </Button>
         </CardContent>
       </Card>

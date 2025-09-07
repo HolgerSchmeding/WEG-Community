@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Shield, Info } from "lucide-react";
-import { useAuth, UserRole } from "@/hooks/use-auth";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Shield, Info } from 'lucide-react';
+import { useAuth, UserRole } from '@/hooks/use-auth';
 
 interface PermissionGateProps {
   requiredRoles: UserRole[];
@@ -16,11 +16,11 @@ interface PermissionGateProps {
  * Komponente für rollenbasierte Zugriffskontrolle
  * Zeigt Inhalt nur an, wenn der Benutzer die erforderlichen Rollen hat
  */
-export function PermissionGate({ 
-  requiredRoles, 
-  children, 
-  fallback, 
-  showMessage = true 
+export function PermissionGate({
+  requiredRoles,
+  children,
+  fallback,
+  showMessage = true,
 }: PermissionGateProps) {
   const { user, hasRole, isLoading } = useAuth();
 
@@ -43,7 +43,9 @@ export function PermissionGate({
           </p>
         </CardContent>
       </Card>
-    ) : fallback || null;
+    ) : (
+      fallback || null
+    );
   }
 
   const userHasRequiredRole = requiredRoles.some(role => hasRole(role));
@@ -87,7 +89,9 @@ export function PermissionGate({
           </div>
         </CardContent>
       </Card>
-    ) : fallback || null;
+    ) : (
+      fallback || null
+    );
   }
 
   return <>{children}</>;

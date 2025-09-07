@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
 // This middleware is currently a placeholder.
 // It can be used in the future to protect routes based on
@@ -13,7 +13,7 @@ export function middleware(request: NextRequest) {
   // if (request.nextUrl.pathname.startsWith('/dashboard') && !isAuthenticated) {
   //   return NextResponse.redirect(new URL('/login', request.url))
   // }
-  return NextResponse.next()
+  return NextResponse.next();
 }
 
 export const config = {
@@ -29,4 +29,4 @@ export const config = {
      */
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
-}
+};

@@ -1,13 +1,19 @@
-import type {NextConfig} from 'next';
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
-  output: 'standalone',
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false, // Enable TypeScript checking for production
   },
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: true, // Disable ESLint during builds for now
+  },
+  // Performance optimizations
+  poweredByHeader: false,
+  compress: true,
+  experimental: {
+    // optimizeCss: true, // Disabled due to build issues
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
   },
   images: {
     remotePatterns: [
@@ -18,9 +24,6 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
-  },
-  devIndicators: {
-    allowedDevOrigins: ["*.cloudworkstations.dev"],
   },
 };
 

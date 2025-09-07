@@ -1,48 +1,58 @@
+'use client';
 
-"use client";
-
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { db } from "@/lib/firebase";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { BackButton } from "@/components/back-button";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { db } from '@/lib/firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { BackButton } from '@/components/back-button';
 
 export default function NewAnnouncementPage() {
   const router = useRouter();
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [author, setAuthor] = useState("Hausverwaltung");
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [author, setAuthor] = useState('Hausverwaltung');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !content) {
-      alert("Bitte füllen Sie Titel und Inhalt aus.");
+      alert('Bitte füllen Sie Titel und Inhalt aus.');
       return;
     }
     setLoading(true);
 
     try {
       // Füge ein neues Dokument zur 'announcements'-Sammlung hinzu
-      await addDoc(collection(db, "announcements"), {
+      await addDoc(collection(db, 'announcements'), {
         title: title,
         content: content,
         author: author,
         createdAt: serverTimestamp(), // Firestore fügt den aktuellen Server-Zeitstempel hinzu
       });
-      
-      // Leite nach erfolgreichem Speichern zur Aushangbrett-Seite weiter
-      router.push("/announcements");
 
+      // Leite nach erfolgreichem Speichern zur Aushangbrett-Seite weiter
+      router.push('/announcements');
     } catch (error) {
-      console.error("Fehler beim Erstellen des Aushangs: ", error);
-      alert("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
+      console.error('Fehler beim Erstellen des Aushangs: ', error);
+      alert('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.');
     } finally {
       setLoading(false);
     }
@@ -56,7 +66,8 @@ export default function NewAnnouncementPage() {
         <CardHeader>
           <CardTitle>Neuen Aushang erstellen</CardTitle>
           <CardDescription>
-            Füllen Sie die Felder aus, um eine neue Mitteilung zu veröffentlichen.
+            Füllen Sie die Felder aus, um eine neue Mitteilung zu
+            veröffentlichen.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -66,7 +77,7 @@ export default function NewAnnouncementPage() {
               <Input
                 id="title"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={e => setTitle(e.target.value)}
                 placeholder="z.B. Wichtige Terminankündigung"
                 required
               />
@@ -76,26 +87,28 @@ export default function NewAnnouncementPage() {
               <Textarea
                 id="content"
                 value={content}
-                onChange={(e) => setContent(e.target.value)}
+                onChange={e => setContent(e.target.value)}
                 placeholder="Geben Sie hier die Details des Aushangs ein."
                 required
                 rows={6}
               />
             </div>
             <div className="space-y-2">
-                <Label htmlFor="author">Autor</Label>
-                <Select value={author} onValueChange={setAuthor}>
-                    <SelectTrigger id="author">
-                        <SelectValue placeholder="Wählen Sie den Autor" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="Hausverwaltung">Hausverwaltung</SelectItem>
-                        <SelectItem value="Verwaltungsbeirat">Verwaltungsbeirat</SelectItem>
-                    </SelectContent>
-                </Select>
+              <Label htmlFor="author">Autor</Label>
+              <Select value={author} onValueChange={setAuthor}>
+                <SelectTrigger id="author">
+                  <SelectValue placeholder="Wählen Sie den Autor" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Hausverwaltung">Hausverwaltung</SelectItem>
+                  <SelectItem value="Verwaltungsbeirat">
+                    Verwaltungsbeirat
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <Button type="submit" disabled={loading}>
-              {loading ? "Wird veröffentlicht..." : "Aushang veröffentlichen"}
+              {loading ? 'Wird veröffentlicht...' : 'Aushang veröffentlichen'}
             </Button>
           </form>
         </CardContent>

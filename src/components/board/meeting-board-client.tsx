@@ -1,17 +1,36 @@
+'use client';
 
-"use client";
-
-import { useState } from "react";
-import { boardMeetings, standardAgendaTemplate } from "@/lib/mock-data"; 
-import { Meeting } from "@/lib/types";
-import { GripVertical, Plus, Trash2, Edit3, RotateCcw, Save, X, Sparkles, Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Badge } from "@/components/ui/badge";
+import { useState } from 'react';
+import { boardMeetings, standardAgendaTemplate } from '@/lib/mock-data';
+import { Meeting } from '@/lib/types';
+import {
+  GripVertical,
+  Plus,
+  Trash2,
+  Edit3,
+  RotateCcw,
+  Save,
+  X,
+  Sparkles,
+  Loader2,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { Badge } from '@/components/ui/badge';
 
 interface EditingItem {
   id: string;
@@ -24,20 +43,23 @@ export default function MeetingBoardClient() {
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const [draggedOverItem, setDraggedOverItem] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<EditingItem | null>(null);
-  const [newItem, setNewItem] = useState<{ title: string; description: string } | null>(null);
+  const [newItem, setNewItem] = useState<{
+    title: string;
+    description: string;
+  } | null>(null);
   const [isImprovingWithAI, setIsImprovingWithAI] = useState(false);
   const [improvingItemId, setImprovingItemId] = useState<string | null>(null);
 
   // Drag & Drop Logic (unchanged)
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>, id: string) => {
     setDraggedItem(id);
-    e.dataTransfer.effectAllowed = "move";
-    e.dataTransfer.setData("text/html", id);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', id);
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    e.dataTransfer.dropEffect = "move";
+    e.dataTransfer.dropEffect = 'move';
   };
 
   const handleDragEnter = (e: React.DragEvent<HTMLDivElement>, id: string) => {
@@ -52,7 +74,7 @@ export default function MeetingBoardClient() {
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>, targetId: string) => {
     e.preventDefault();
-    
+
     if (!draggedItem || draggedItem === targetId) {
       setDraggedItem(null);
       setDraggedOverItem(null);
@@ -81,27 +103,33 @@ export default function MeetingBoardClient() {
   const moveUp = (index: number) => {
     if (index === 0) return;
     const newMeetings = [...meetings];
-    [newMeetings[index], newMeetings[index - 1]] = [newMeetings[index - 1], newMeetings[index]];
+    [newMeetings[index], newMeetings[index - 1]] = [
+      newMeetings[index - 1],
+      newMeetings[index],
+    ];
     setMeetings(newMeetings);
   };
 
   const moveDown = (index: number) => {
     if (index === meetings.length - 1) return;
     const newMeetings = [...meetings];
-    [newMeetings[index], newMeetings[index + 1]] = [newMeetings[index + 1], newMeetings[index]];
+    [newMeetings[index], newMeetings[index + 1]] = [
+      newMeetings[index + 1],
+      newMeetings[index],
+    ];
     setMeetings(newMeetings);
   };
 
   // CRUD Operations
   const addNewItem = () => {
     if (!newItem?.title.trim()) return;
-    
+
     const newMeeting: Meeting = {
       id: `top-${Date.now()}`,
       title: newItem.title.trim(),
-      description: newItem.description.trim()
+      description: newItem.description.trim(),
     };
-    
+
     setMeetings([...meetings, newMeeting]);
     setNewItem(null);
   };
@@ -110,18 +138,24 @@ export default function MeetingBoardClient() {
     setEditingItem({
       id: meeting.id,
       title: meeting.title,
-      description: meeting.description
+      description: meeting.description,
     });
   };
 
   const saveEdit = () => {
     if (!editingItem) return;
-    
-    setMeetings(meetings.map(m => 
-      m.id === editingItem.id 
-        ? { ...m, title: editingItem.title, description: editingItem.description }
-        : m
-    ));
+
+    setMeetings(
+      meetings.map(m =>
+        m.id === editingItem.id
+          ? {
+              ...m,
+              title: editingItem.title,
+              description: editingItem.description,
+            }
+          : m
+      )
+    );
     setEditingItem(null);
   };
 
@@ -140,7 +174,10 @@ export default function MeetingBoardClient() {
   };
 
   // KI-Verbesserungs-Funktionen
-  const improveWithAI = async (item: { title: string; description: string }, isNewItem = false) => {
+  const improveWithAI = async (
+    item: { title: string; description: string },
+    isNewItem = false
+  ) => {
     if (isNewItem) {
       setIsImprovingWithAI(true);
     } else {
@@ -156,7 +193,7 @@ export default function MeetingBoardClient() {
         body: JSON.stringify({
           title: item.title,
           description: item.description,
-          meetingType: 'eigentümerversammlung'
+          meetingType: 'eigentümerversammlung',
         }),
       });
 
@@ -169,16 +206,15 @@ export default function MeetingBoardClient() {
       if (isNewItem && newItem) {
         setNewItem({
           title: result.improvedTitle,
-          description: result.improvedDescription
+          description: result.improvedDescription,
         });
       } else if (editingItem) {
         setEditingItem({
           ...editingItem,
           title: result.improvedTitle,
-          description: result.improvedDescription
+          description: result.improvedDescription,
         });
       }
-
     } catch (error) {
       console.error('Error improving with AI:', error);
       // TODO: Show error toast/notification
@@ -195,16 +231,20 @@ export default function MeetingBoardClient() {
         <Button
           variant="default"
           size="sm"
-          onClick={() => setNewItem({ title: "", description: "" })}
+          onClick={() => setNewItem({ title: '', description: '' })}
           className="flex items-center gap-2"
         >
           <Plus className="h-4 w-4" />
           Neuer TOP
         </Button>
-        
+
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="outline" size="sm" className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+            >
               <RotateCcw className="h-4 w-4" />
               Standard-Vorlage laden
             </Button>
@@ -213,8 +253,9 @@ export default function MeetingBoardClient() {
             <AlertDialogHeader>
               <AlertDialogTitle>Standard-Tagesordnung laden</AlertDialogTitle>
               <AlertDialogDescription>
-                Möchten Sie die aktuelle Tagesordnung durch die Standard-WEG-Vorlage ersetzen? 
-                Alle aktuellen Änderungen gehen verloren.
+                Möchten Sie die aktuelle Tagesordnung durch die
+                Standard-WEG-Vorlage ersetzen? Alle aktuellen Änderungen gehen
+                verloren.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -236,7 +277,9 @@ export default function MeetingBoardClient() {
         <Card className="p-4 border-primary/50">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h4 className="font-medium">Neuen Tagesordnungspunkt hinzufügen</h4>
+              <h4 className="font-medium">
+                Neuen Tagesordnungspunkt hinzufügen
+              </h4>
               <Badge variant="outline" className="text-xs">
                 <Sparkles className="h-3 w-3 mr-1" />
                 KI-Assistent verfügbar
@@ -245,22 +288,28 @@ export default function MeetingBoardClient() {
             <Input
               placeholder="Titel des Tagesordnungspunkts..."
               value={newItem.title}
-              onChange={(e) => setNewItem({ ...newItem, title: e.target.value })}
+              onChange={e => setNewItem({ ...newItem, title: e.target.value })}
             />
             <Textarea
               placeholder="Beschreibung oder Stichworte (z.B. 'Heizungsaustausch', 'neue Hausordnung', 'PV-Anlage')..."
               value={newItem.description}
-              onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
+              onChange={e =>
+                setNewItem({ ...newItem, description: e.target.value })
+              }
               rows={2}
             />
             <div className="flex gap-2 flex-wrap">
-              <Button onClick={addNewItem} size="sm" disabled={!newItem.title.trim()}>
+              <Button
+                onClick={addNewItem}
+                size="sm"
+                disabled={!newItem.title.trim()}
+              >
                 <Plus className="h-4 w-4 mr-1" />
                 Hinzufügen
               </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={() => improveWithAI(newItem, true)}
                 disabled={!newItem.title.trim() || isImprovingWithAI}
                 className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200 hover:from-blue-100 hover:to-purple-100"
@@ -272,7 +321,11 @@ export default function MeetingBoardClient() {
                 )}
                 {isImprovingWithAI ? 'KI arbeitet...' : 'Mit KI verbessern'}
               </Button>
-              <Button variant="outline" size="sm" onClick={() => setNewItem(null)}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setNewItem(null)}
+              >
                 <X className="h-4 w-4 mr-1" />
                 Abbrechen
               </Button>
@@ -283,27 +336,28 @@ export default function MeetingBoardClient() {
 
       {/* Help Text */}
       <div className="text-sm text-muted-foreground mb-4">
-        💡 Ziehen Sie die Tagesordnungspunkte per Drag & Drop oder verwenden Sie die Pfeiltasten zum Sortieren.
+        💡 Ziehen Sie die Tagesordnungspunkte per Drag & Drop oder verwenden Sie
+        die Pfeiltasten zum Sortieren.
       </div>
-      
+
       {/* Meeting Items */}
       {meetings.map((meeting, index) => (
         <Card
           key={meeting.id}
           draggable={!editingItem}
-          onDragStart={(e) => !editingItem && handleDragStart(e, meeting.id)}
+          onDragStart={e => !editingItem && handleDragStart(e, meeting.id)}
           onDragOver={handleDragOver}
-          onDragEnter={(e) => handleDragEnter(e, meeting.id)}
+          onDragEnter={e => handleDragEnter(e, meeting.id)}
           onDragLeave={handleDragLeave}
-          onDrop={(e) => handleDrop(e, meeting.id)}
+          onDrop={e => handleDrop(e, meeting.id)}
           onDragEnd={handleDragEnd}
           className={cn(
-            "p-4 transition-all duration-200",
-            !editingItem && "cursor-move",
-            draggedItem === meeting.id && "opacity-50 scale-95",
-            draggedOverItem === meeting.id && "border-primary border-2",
-            editingItem?.id === meeting.id && "border-blue-500 border-2",
-            "hover:shadow-md"
+            'p-4 transition-all duration-200',
+            !editingItem && 'cursor-move',
+            draggedItem === meeting.id && 'opacity-50 scale-95',
+            draggedOverItem === meeting.id && 'border-primary border-2',
+            editingItem?.id === meeting.id && 'border-blue-500 border-2',
+            'hover:shadow-md'
           )}
         >
           <div className="flex items-start gap-3">
@@ -341,12 +395,19 @@ export default function MeetingBoardClient() {
                 <div className="space-y-3">
                   <Input
                     value={editingItem.title}
-                    onChange={(e) => setEditingItem({ ...editingItem, title: e.target.value })}
+                    onChange={e =>
+                      setEditingItem({ ...editingItem, title: e.target.value })
+                    }
                     className="font-bold text-lg"
                   />
                   <Textarea
                     value={editingItem.description}
-                    onChange={(e) => setEditingItem({ ...editingItem, description: e.target.value })}
+                    onChange={e =>
+                      setEditingItem({
+                        ...editingItem,
+                        description: e.target.value,
+                      })
+                    }
                     rows={2}
                   />
                   <div className="flex gap-2 flex-wrap">
@@ -354,9 +415,9 @@ export default function MeetingBoardClient() {
                       <Save className="h-4 w-4 mr-1" />
                       Speichern
                     </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={() => improveWithAI(editingItem)}
                       disabled={improvingItemId === editingItem.title}
                       className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200 hover:from-blue-100 hover:to-purple-100"
@@ -366,7 +427,9 @@ export default function MeetingBoardClient() {
                       ) : (
                         <Sparkles className="h-4 w-4 mr-1" />
                       )}
-                      {improvingItemId === editingItem.title ? 'KI arbeitet...' : 'Mit KI verbessern'}
+                      {improvingItemId === editingItem.title
+                        ? 'KI arbeitet...'
+                        : 'Mit KI verbessern'}
                     </Button>
                     <Button variant="outline" size="sm" onClick={cancelEdit}>
                       <X className="h-4 w-4 mr-1" />
@@ -416,14 +479,20 @@ export default function MeetingBoardClient() {
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Tagesordnungspunkt löschen</AlertDialogTitle>
+                        <AlertDialogTitle>
+                          Tagesordnungspunkt löschen
+                        </AlertDialogTitle>
                         <AlertDialogDescription>
-                          Möchten Sie "{meeting.title}" wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.
+                          Möchten Sie "{meeting.title}" wirklich löschen? Diese
+                          Aktion kann nicht rückgängig gemacht werden.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Abbrechen</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => deleteItem(meeting.id)} className="bg-destructive text-destructive-foreground">
+                        <AlertDialogAction
+                          onClick={() => deleteItem(meeting.id)}
+                          className="bg-destructive text-destructive-foreground"
+                        >
                           Löschen
                         </AlertDialogAction>
                       </AlertDialogFooter>
@@ -435,7 +504,7 @@ export default function MeetingBoardClient() {
           </div>
         </Card>
       ))}
-      
+
       {/* Summary */}
       <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
         <div className="flex items-center gap-2 text-green-800">
@@ -443,7 +512,8 @@ export default function MeetingBoardClient() {
           <span className="font-medium">Tagesordnung bereit</span>
         </div>
         <p className="text-sm text-green-700 mt-1">
-          Die {meetings.length} Tagesordnungspunkte sind sortiert und können für die Versammlung verwendet werden.
+          Die {meetings.length} Tagesordnungspunkte sind sortiert und können für
+          die Versammlung verwendet werden.
         </p>
       </div>
     </div>

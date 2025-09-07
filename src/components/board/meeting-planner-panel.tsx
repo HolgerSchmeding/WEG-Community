@@ -1,24 +1,49 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { currentMeetingEvent } from "@/lib/mock-data";
-import { MeetingEvent, MeetingType, MeetingStatus, InviteeGroup } from "@/lib/types";
-import { Calendar, Clock, MapPin, Users, FileText, Save, Edit3, CheckCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { format } from "date-fns";
-import { de } from "date-fns/locale";
+import { useState } from 'react';
+import { currentMeetingEvent } from '@/lib/mock-data';
+import {
+  MeetingEvent,
+  MeetingType,
+  MeetingStatus,
+  InviteeGroup,
+} from '@/lib/types';
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  Users,
+  FileText,
+  Save,
+  Edit3,
+  CheckCircle,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { format } from 'date-fns';
+import { de } from 'date-fns/locale';
 
 export default function MeetingPlannerPanel() {
-  const [meetingEvent, setMeetingEvent] = useState<MeetingEvent>(currentMeetingEvent);
+  const [meetingEvent, setMeetingEvent] =
+    useState<MeetingEvent>(currentMeetingEvent);
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState<MeetingEvent>(currentMeetingEvent);
 
@@ -34,20 +59,29 @@ export default function MeetingPlannerPanel() {
 
   const getStatusColor = (status: MeetingStatus) => {
     switch (status) {
-      case "Entwurf": return "bg-gray-100 text-gray-800 border-gray-200";
-      case "Planung": return "bg-blue-100 text-blue-800 border-blue-200";
-      case "Genehmigt": return "bg-green-100 text-green-800 border-green-200";
-      case "Versendet": return "bg-purple-100 text-purple-800 border-purple-200";
-      default: return "bg-gray-100 text-gray-800 border-gray-200";
+      case 'Entwurf':
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'Planung':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'Genehmigt':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'Versendet':
+        return 'bg-purple-100 text-purple-800 border-purple-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getTypeIcon = (type: MeetingType) => {
     switch (type) {
-      case "Eigentümerversammlung": return <Users className="h-4 w-4" />;
-      case "Beiratssitzung": return <FileText className="h-4 w-4" />;
-      case "Sonder-Eigentümerversammlung": return <Users className="h-4 w-4" />;
-      default: return <Users className="h-4 w-4" />;
+      case 'Eigentümerversammlung':
+        return <Users className="h-4 w-4" />;
+      case 'Beiratssitzung':
+        return <FileText className="h-4 w-4" />;
+      case 'Sonder-Eigentümerversammlung':
+        return <Users className="h-4 w-4" />;
+      default:
+        return <Users className="h-4 w-4" />;
     }
   };
 
@@ -67,15 +101,21 @@ export default function MeetingPlannerPanel() {
             <Label htmlFor="meeting-type">Art der Versammlung</Label>
             <Select
               value={editForm.type}
-              onValueChange={(value: MeetingType) => setEditForm({...editForm, type: value})}
+              onValueChange={(value: MeetingType) =>
+                setEditForm({ ...editForm, type: value })
+              }
             >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Eigentümerversammlung">Eigentümerversammlung</SelectItem>
+                <SelectItem value="Eigentümerversammlung">
+                  Eigentümerversammlung
+                </SelectItem>
                 <SelectItem value="Beiratssitzung">Beiratssitzung</SelectItem>
-                <SelectItem value="Sonder-Eigentümerversammlung">Sonder-Eigentümerversammlung</SelectItem>
+                <SelectItem value="Sonder-Eigentümerversammlung">
+                  Sonder-Eigentümerversammlung
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -85,7 +125,9 @@ export default function MeetingPlannerPanel() {
             <Input
               id="meeting-title"
               value={editForm.title}
-              onChange={(e) => setEditForm({...editForm, title: e.target.value})}
+              onChange={e =>
+                setEditForm({ ...editForm, title: e.target.value })
+              }
               placeholder="z.B. Ordentliche Eigentümerversammlung 2024"
             />
           </div>
@@ -97,7 +139,12 @@ export default function MeetingPlannerPanel() {
                 id="meeting-date"
                 type="date"
                 value={editForm.date ? format(editForm.date, 'yyyy-MM-dd') : ''}
-                onChange={(e) => setEditForm({...editForm, date: e.target.value ? new Date(e.target.value) : undefined})}
+                onChange={e =>
+                  setEditForm({
+                    ...editForm,
+                    date: e.target.value ? new Date(e.target.value) : undefined,
+                  })
+                }
               />
             </div>
             <div>
@@ -106,7 +153,9 @@ export default function MeetingPlannerPanel() {
                 id="meeting-time"
                 type="time"
                 value={editForm.time || ''}
-                onChange={(e) => setEditForm({...editForm, time: e.target.value})}
+                onChange={e =>
+                  setEditForm({ ...editForm, time: e.target.value })
+                }
               />
             </div>
           </div>
@@ -119,29 +168,60 @@ export default function MeetingPlannerPanel() {
               <Input
                 placeholder="Straße"
                 value={editForm.location.street}
-                onChange={(e) => setEditForm({...editForm, location: {...editForm.location, street: e.target.value}})}
+                onChange={e =>
+                  setEditForm({
+                    ...editForm,
+                    location: { ...editForm.location, street: e.target.value },
+                  })
+                }
               />
               <Input
                 placeholder="Hausnummer"
                 value={editForm.location.houseNumber}
-                onChange={(e) => setEditForm({...editForm, location: {...editForm.location, houseNumber: e.target.value}})}
+                onChange={e =>
+                  setEditForm({
+                    ...editForm,
+                    location: {
+                      ...editForm.location,
+                      houseNumber: e.target.value,
+                    },
+                  })
+                }
               />
             </div>
             <Input
               placeholder="Lokalität (z.B. Gemeindesaal, Verwaltungsraum)"
               value={editForm.location.locality}
-              onChange={(e) => setEditForm({...editForm, location: {...editForm.location, locality: e.target.value}})}
+              onChange={e =>
+                setEditForm({
+                  ...editForm,
+                  location: { ...editForm.location, locality: e.target.value },
+                })
+              }
             />
             <div className="grid grid-cols-2 gap-3">
               <Input
                 placeholder="PLZ"
                 value={editForm.location.postalCode || ''}
-                onChange={(e) => setEditForm({...editForm, location: {...editForm.location, postalCode: e.target.value}})}
+                onChange={e =>
+                  setEditForm({
+                    ...editForm,
+                    location: {
+                      ...editForm.location,
+                      postalCode: e.target.value,
+                    },
+                  })
+                }
               />
               <Input
                 placeholder="Stadt"
                 value={editForm.location.city || ''}
-                onChange={(e) => setEditForm({...editForm, location: {...editForm.location, city: e.target.value}})}
+                onChange={e =>
+                  setEditForm({
+                    ...editForm,
+                    location: { ...editForm.location, city: e.target.value },
+                  })
+                }
               />
             </div>
           </div>
@@ -152,13 +232,17 @@ export default function MeetingPlannerPanel() {
             <Label htmlFor="invitees">Einzuladende Personen</Label>
             <Select
               value={editForm.invitees}
-              onValueChange={(value: InviteeGroup) => setEditForm({...editForm, invitees: value})}
+              onValueChange={(value: InviteeGroup) =>
+                setEditForm({ ...editForm, invitees: value })
+              }
             >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Wohnungseigentümer">Wohnungseigentümer</SelectItem>
+                <SelectItem value="Wohnungseigentümer">
+                  Wohnungseigentümer
+                </SelectItem>
                 <SelectItem value="Beirat">Beirat</SelectItem>
                 <SelectItem value="Alle">Alle</SelectItem>
               </SelectContent>
@@ -169,7 +253,9 @@ export default function MeetingPlannerPanel() {
             <Label htmlFor="status">Status</Label>
             <Select
               value={editForm.status}
-              onValueChange={(value: MeetingStatus) => setEditForm({...editForm, status: value})}
+              onValueChange={(value: MeetingStatus) =>
+                setEditForm({ ...editForm, status: value })
+              }
             >
               <SelectTrigger>
                 <SelectValue />
@@ -205,7 +291,11 @@ export default function MeetingPlannerPanel() {
             {getTypeIcon(meetingEvent.type)}
             Versammlungsplanung
           </CardTitle>
-          <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsEditing(true)}
+          >
             <Edit3 className="h-4 w-4" />
           </Button>
         </div>
@@ -213,7 +303,9 @@ export default function MeetingPlannerPanel() {
       <CardContent className="space-y-4">
         <div>
           <div className="flex items-center justify-between mb-2">
-            <Badge className={cn("border", getStatusColor(meetingEvent.status))}>
+            <Badge
+              className={cn('border', getStatusColor(meetingEvent.status))}
+            >
               {meetingEvent.status}
             </Badge>
             <span className="text-xs text-muted-foreground">
@@ -221,7 +313,9 @@ export default function MeetingPlannerPanel() {
             </span>
           </div>
           <h3 className="font-medium text-sm">{meetingEvent.title}</h3>
-          <p className="text-xs text-muted-foreground mt-1">{meetingEvent.type}</p>
+          <p className="text-xs text-muted-foreground mt-1">
+            {meetingEvent.type}
+          </p>
         </div>
 
         <Separator />
@@ -230,10 +324,14 @@ export default function MeetingPlannerPanel() {
           <div className="flex items-center gap-2 text-sm">
             <Calendar className="h-4 w-4 text-muted-foreground" />
             <span>
-              {meetingEvent.date ? format(meetingEvent.date, 'EEEE, dd. MMMM yyyy', { locale: de }) : 'Datum nicht festgelegt'}
+              {meetingEvent.date
+                ? format(meetingEvent.date, 'EEEE, dd. MMMM yyyy', {
+                    locale: de,
+                  })
+                : 'Datum nicht festgelegt'}
             </span>
           </div>
-          
+
           {meetingEvent.time && (
             <div className="flex items-center gap-2 text-sm">
               <Clock className="h-4 w-4 text-muted-foreground" />
@@ -246,9 +344,14 @@ export default function MeetingPlannerPanel() {
             <div>
               <div>{meetingEvent.location.locality}</div>
               <div className="text-xs text-muted-foreground">
-                {meetingEvent.location.street} {meetingEvent.location.houseNumber}
+                {meetingEvent.location.street}{' '}
+                {meetingEvent.location.houseNumber}
                 {meetingEvent.location.city && (
-                  <><br />{meetingEvent.location.postalCode} {meetingEvent.location.city}</>
+                  <>
+                    <br />
+                    {meetingEvent.location.postalCode}{' '}
+                    {meetingEvent.location.city}
+                  </>
                 )}
               </div>
             </div>
@@ -268,19 +371,19 @@ export default function MeetingPlannerPanel() {
             <span className="text-sm font-medium">Nächste Schritte</span>
           </div>
           <div className="text-xs text-muted-foreground space-y-1">
-            {meetingEvent.status === "Entwurf" && (
+            {meetingEvent.status === 'Entwurf' && (
               <div>• Tagesordnung fertigstellen</div>
             )}
-            {meetingEvent.status === "Planung" && (
+            {meetingEvent.status === 'Planung' && (
               <>
                 <div>• Einladungen vorbereiten</div>
                 <div>• Tagesordnung zur Genehmigung vorlegen</div>
               </>
             )}
-            {meetingEvent.status === "Genehmigt" && (
+            {meetingEvent.status === 'Genehmigt' && (
               <div>• Einladungen versenden</div>
             )}
-            {meetingEvent.status === "Versendet" && (
+            {meetingEvent.status === 'Versendet' && (
               <div>• Auf Versammlung warten</div>
             )}
           </div>

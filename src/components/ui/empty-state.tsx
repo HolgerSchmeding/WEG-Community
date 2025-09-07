@@ -1,28 +1,28 @@
-import { ReactNode } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { 
-  FileX, 
-  Search, 
-  Users, 
-  ShoppingBag, 
-  Bell, 
-  Calendar, 
+import { ReactNode } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import {
+  FileX,
+  Search,
+  Users,
+  ShoppingBag,
+  Bell,
+  Calendar,
   MessageSquare,
   Building2,
   Folder,
   Settings,
-  Plus
-} from "lucide-react";
-import { cn } from "@/lib/utils";
+  Plus,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-export type EmptyStateIcon = 
-  | 'file' 
-  | 'search' 
-  | 'users' 
-  | 'shopping' 
-  | 'notifications' 
-  | 'calendar' 
+export type EmptyStateIcon =
+  | 'file'
+  | 'search'
+  | 'users'
+  | 'shopping'
+  | 'notifications'
+  | 'calendar'
   | 'messages'
   | 'building'
   | 'folder'
@@ -68,50 +68,64 @@ export function EmptyState({
   actions = [],
   className,
   compact = false,
-  illustration = false
+  illustration = false,
 }: EmptyStateProps) {
-  const IconComponent = customIcon ? null : iconMap[icon as keyof typeof iconMap];
+  const IconComponent = customIcon
+    ? null
+    : iconMap[icon as keyof typeof iconMap];
 
   return (
-    <Card className={cn(
-      "border-dashed bg-muted/20", 
-      compact ? "p-6" : "p-12", 
-      className
-    )}>
+    <Card
+      className={cn(
+        'border-dashed bg-muted/20',
+        compact ? 'p-6' : 'p-12',
+        className
+      )}
+    >
       <CardContent className="flex flex-col items-center justify-center text-center space-y-4 p-0">
         {/* Icon or Illustration */}
-        <div className={cn(
-          "rounded-full bg-muted flex items-center justify-center",
-          compact ? "h-12 w-12" : illustration ? "h-24 w-24" : "h-16 w-16"
-        )}>
+        <div
+          className={cn(
+            'rounded-full bg-muted flex items-center justify-center',
+            compact ? 'h-12 w-12' : illustration ? 'h-24 w-24' : 'h-16 w-16'
+          )}
+        >
           {customIcon ? (
-            <div className={cn(
-              "text-muted-foreground",
-              compact ? "h-6 w-6" : illustration ? "h-12 w-12" : "h-8 w-8"
-            )}>
+            <div
+              className={cn(
+                'text-muted-foreground',
+                compact ? 'h-6 w-6' : illustration ? 'h-12 w-12' : 'h-8 w-8'
+              )}
+            >
               {customIcon}
             </div>
           ) : IconComponent ? (
-            <IconComponent className={cn(
-              "text-muted-foreground",
-              compact ? "h-6 w-6" : illustration ? "h-12 w-12" : "h-8 w-8"
-            )} />
+            <IconComponent
+              className={cn(
+                'text-muted-foreground',
+                compact ? 'h-6 w-6' : illustration ? 'h-12 w-12' : 'h-8 w-8'
+              )}
+            />
           ) : null}
         </div>
 
         {/* Content */}
         <div className="space-y-2 max-w-md">
-          <h3 className={cn(
-            "font-medium text-foreground",
-            compact ? "text-lg" : "text-xl"
-          )}>
+          <h3
+            className={cn(
+              'font-medium text-foreground',
+              compact ? 'text-lg' : 'text-xl'
+            )}
+          >
             {title}
           </h3>
           {description && (
-            <p className={cn(
-              "text-muted-foreground leading-relaxed",
-              compact ? "text-sm" : "text-base"
-            )}>
+            <p
+              className={cn(
+                'text-muted-foreground leading-relaxed',
+                compact ? 'text-sm' : 'text-base'
+              )}
+            >
               {description}
             </p>
           )}
@@ -119,18 +133,18 @@ export function EmptyState({
 
         {/* Actions */}
         {actions.length > 0 && (
-          <div className={cn(
-            "flex gap-2 pt-2",
-            actions.length > 2 ? "flex-col sm:flex-row" : "flex-row"
-          )}>
+          <div
+            className={cn(
+              'flex gap-2 pt-2',
+              actions.length > 2 ? 'flex-col sm:flex-row' : 'flex-row'
+            )}
+          >
             {actions.map((action, index) => (
               <Button
                 key={index}
                 variant={action.variant || 'default'}
                 onClick={action.onClick}
-                className={cn(
-                  compact ? "px-4 py-2 text-sm" : "px-6 py-2"
-                )}
+                className={cn(compact ? 'px-4 py-2 text-sm' : 'px-6 py-2')}
               >
                 {action.icon && <span className="mr-2">{action.icon}</span>}
                 {action.label}
@@ -144,11 +158,11 @@ export function EmptyState({
 }
 
 // Specialized Empty State Components for common scenarios
-export function NoSearchResults({ 
-  query, 
-  onClearSearch 
-}: { 
-  query: string; 
+export function NoSearchResults({
+  query,
+  onClearSearch,
+}: {
+  query: string;
   onClearSearch?: () => void;
 }) {
   return (
@@ -156,21 +170,27 @@ export function NoSearchResults({
       icon="search"
       title="Keine Ergebnisse gefunden"
       description={`Für "${query}" wurden keine passenden Einträge gefunden. Versuchen Sie es mit anderen Suchbegriffen.`}
-      actions={onClearSearch ? [{
-        label: "Suche zurücksetzen",
-        onClick: onClearSearch,
-        variant: "outline"
-      }] : []}
+      actions={
+        onClearSearch
+          ? [
+              {
+                label: 'Suche zurücksetzen',
+                onClick: onClearSearch,
+                variant: 'outline',
+              },
+            ]
+          : []
+      }
       compact
     />
   );
 }
 
-export function NoDataYet({ 
-  title, 
-  description, 
-  actionLabel, 
-  onAction 
+export function NoDataYet({
+  title,
+  description,
+  actionLabel,
+  onAction,
 }: {
   title: string;
   description?: string;
@@ -182,19 +202,25 @@ export function NoDataYet({
       icon="folder"
       title={title}
       description={description}
-      actions={actionLabel && onAction ? [{
-        label: actionLabel,
-        onClick: onAction,
-        icon: <Plus className="h-4 w-4" />
-      }] : []}
+      actions={
+        actionLabel && onAction
+          ? [
+              {
+                label: actionLabel,
+                onClick: onAction,
+                icon: <Plus className="h-4 w-4" />,
+              },
+            ]
+          : []
+      }
       illustration
     />
   );
 }
 
-export function NoPermissions({ 
-  title = "Keine Berechtigung",
-  description = "Sie haben keine Berechtigung, auf diesen Bereich zuzugreifen. Wenden Sie sich an die Verwaltung, wenn Sie glauben, dass dies ein Fehler ist."
+export function NoPermissions({
+  title = 'Keine Berechtigung',
+  description = 'Sie haben keine Berechtigung, auf diesen Bereich zuzugreifen. Wenden Sie sich an die Verwaltung, wenn Sie glauben, dass dies ein Fehler ist.',
 }) {
   return (
     <EmptyState
@@ -208,8 +234,8 @@ export function NoPermissions({
 }
 
 export function MaintenanceMode({
-  title = "Wartungsmodus",
-  description = "Dieser Bereich ist derzeit nicht verfügbar. Wir arbeiten an Verbesserungen und sind bald wieder da."
+  title = 'Wartungsmodus',
+  description = 'Dieser Bereich ist derzeit nicht verfügbar. Wir arbeiten an Verbesserungen und sind bald wieder da.',
 }) {
   return (
     <EmptyState
@@ -229,11 +255,17 @@ export function NoAnnouncements({ onCreateNew }: { onCreateNew?: () => void }) {
       icon="notifications"
       title="Keine Aushänge vorhanden"
       description="Es sind derzeit keine Aushänge verfügbar. Neue Mitteilungen erscheinen hier, sobald sie veröffentlicht werden."
-      actions={onCreateNew ? [{
-        label: "Neuen Aushang erstellen",
-        onClick: onCreateNew,
-        icon: <Plus className="h-4 w-4" />
-      }] : []}
+      actions={
+        onCreateNew
+          ? [
+              {
+                label: 'Neuen Aushang erstellen',
+                onClick: onCreateNew,
+                icon: <Plus className="h-4 w-4" />,
+              },
+            ]
+          : []
+      }
       illustration
     />
   );
@@ -245,27 +277,43 @@ export function NoMarketplaceItems({ onAddItem }: { onAddItem?: () => void }) {
       icon="shopping"
       title="Keine Angebote im Marktplatz"
       description="Der Marktplatz ist noch leer. Seien Sie der Erste und teilen Sie ein Angebot mit Ihrer Nachbarschaft."
-      actions={onAddItem ? [{
-        label: "Erstes Angebot erstellen",
-        onClick: onAddItem,
-        icon: <Plus className="h-4 w-4" />
-      }] : []}
+      actions={
+        onAddItem
+          ? [
+              {
+                label: 'Erstes Angebot erstellen',
+                onClick: onAddItem,
+                icon: <Plus className="h-4 w-4" />,
+              },
+            ]
+          : []
+      }
       illustration
     />
   );
 }
 
-export function NoAppointments({ onScheduleNew }: { onScheduleNew?: () => void }) {
+export function NoAppointments({
+  onScheduleNew,
+}: {
+  onScheduleNew?: () => void;
+}) {
   return (
     <EmptyState
       icon="calendar"
       title="Keine Termine vorhanden"
       description="Es sind derzeit keine Termine geplant. Neue Termine werden hier angezeigt."
-      actions={onScheduleNew ? [{
-        label: "Neuen Termin planen",
-        onClick: onScheduleNew,
-        icon: <Plus className="h-4 w-4" />
-      }] : []}
+      actions={
+        onScheduleNew
+          ? [
+              {
+                label: 'Neuen Termin planen',
+                onClick: onScheduleNew,
+                icon: <Plus className="h-4 w-4" />,
+              },
+            ]
+          : []
+      }
     />
   );
 }
@@ -276,11 +324,17 @@ export function NoTickets({ onCreateNew }: { onCreateNew?: () => void }) {
       icon="messages"
       title="Keine Anfragen vorhanden"
       description="Sie haben noch keine Anfragen gestellt. Hier können Sie den Status Ihrer Anliegen verfolgen."
-      actions={onCreateNew ? [{
-        label: "Neue Anfrage stellen",
-        onClick: onCreateNew,
-        icon: <Plus className="h-4 w-4" />
-      }] : []}
+      actions={
+        onCreateNew
+          ? [
+              {
+                label: 'Neue Anfrage stellen',
+                onClick: onCreateNew,
+                icon: <Plus className="h-4 w-4" />,
+              },
+            ]
+          : []
+      }
     />
   );
 }

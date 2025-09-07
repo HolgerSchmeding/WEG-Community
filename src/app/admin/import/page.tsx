@@ -1,104 +1,112 @@
-"use client";
+'use client';
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { 
-  Database, 
-  Upload, 
-  CheckCircle, 
-  AlertCircle, 
-  FileImage, 
-  FileText, 
-  Video, 
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
+import {
+  Database,
+  Upload,
+  CheckCircle,
+  AlertCircle,
+  FileImage,
+  FileText,
+  Video,
   Server,
   ArrowLeft,
   Clock,
-  HardDrive
-} from "lucide-react";
+  HardDrive,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
 const importCategories = [
   {
-    type: "Apache2-Bereich",
-    bereich: "System",
+    type: 'Apache2-Bereich',
+    bereich: 'System',
     umfang: 600,
     icon: Server,
-    color: "bg-orange-100 text-orange-800",
-    description: "Webserver-Konfiguration und Logs"
+    color: 'bg-orange-100 text-orange-800',
+    description: 'Webserver-Konfiguration und Logs',
   },
   {
-    type: "MySQL Dump",
-    bereich: "Datenbank",
+    type: 'MySQL Dump',
+    bereich: 'Datenbank',
     umfang: 0.2,
     icon: Database,
-    color: "bg-blue-100 text-blue-800",
-    description: "Strukturierte Verwaltungsdaten"
+    color: 'bg-blue-100 text-blue-800',
+    description: 'Strukturierte Verwaltungsdaten',
   },
   {
-    type: "Bilder (*.jpg)",
-    bereich: "Beirat",
+    type: 'Bilder (*.jpg)',
+    bereich: 'Beirat',
     umfang: 470,
     icon: FileImage,
-    color: "bg-green-100 text-green-800",
-    description: "Fotos von Versammlungen und Dokumenten"
+    color: 'bg-green-100 text-green-800',
+    description: 'Fotos von Versammlungen und Dokumenten',
   },
   {
-    type: "Bilder (*.jpg)",
-    bereich: "EG",
+    type: 'Bilder (*.jpg)',
+    bereich: 'EG',
     umfang: 65,
     icon: FileImage,
-    color: "bg-green-100 text-green-800",
-    description: "Eigentümergemeinschaft Bildarchiv"
+    color: 'bg-green-100 text-green-800',
+    description: 'Eigentümergemeinschaft Bildarchiv',
   },
   {
-    type: "Dokumente (*.pdf)",
-    bereich: "WEG-Archiv",
+    type: 'Dokumente (*.pdf)',
+    bereich: 'WEG-Archiv',
     umfang: 10,
     icon: FileText,
-    color: "bg-purple-100 text-purple-800",
-    description: "Allgemeine WEG-Dokumente (öffentlich für Bewohner)"
+    color: 'bg-purple-100 text-purple-800',
+    description: 'Allgemeine WEG-Dokumente (öffentlich für Bewohner)',
   },
   {
-    type: "Dokumente (*.pdf)",
-    bereich: "Beirat (WEG)",
+    type: 'Dokumente (*.pdf)',
+    bereich: 'Beirat (WEG)',
     umfang: 180,
     icon: FileText,
-    color: "bg-purple-100 text-purple-800",
-    description: "Beirats-Protokolle und Beschlüsse (öffentlich)"
+    color: 'bg-purple-100 text-purple-800',
+    description: 'Beirats-Protokolle und Beschlüsse (öffentlich)',
   },
   {
-    type: "Dokumente (*.pdf)",
-    bereich: "EG (WEG)",
+    type: 'Dokumente (*.pdf)',
+    bereich: 'EG (WEG)',
     umfang: 280,
     icon: FileText,
-    color: "bg-purple-100 text-purple-800",
-    description: "Eigentümerversammlung Unterlagen (öffentlich)"
+    color: 'bg-purple-100 text-purple-800',
+    description: 'Eigentümerversammlung Unterlagen (öffentlich)',
   },
   {
-    type: "Interne Dokumente (*.pdf)",
-    bereich: "Hausverwaltung",
+    type: 'Interne Dokumente (*.pdf)',
+    bereich: 'Hausverwaltung',
     umfang: 45,
     icon: FileText,
-    color: "bg-amber-100 text-amber-800",
-    description: "Verträge, interne Korrespondenz (nur Admin)"
+    color: 'bg-amber-100 text-amber-800',
+    description: 'Verträge, interne Korrespondenz (nur Admin)',
   },
   {
-    type: "Video (*.mp4)",
-    bereich: "EG",
+    type: 'Video (*.mp4)',
+    bereich: 'EG',
     umfang: 370,
     icon: Video,
-    color: "bg-red-100 text-red-800",
-    description: "Aufzeichnungen von Versammlungen"
-  }
+    color: 'bg-red-100 text-red-800',
+    description: 'Aufzeichnungen von Versammlungen',
+  },
 ];
 
 const totalSize = importCategories.reduce((sum, cat) => sum + cat.umfang, 0);
 
 export default function ImportPage() {
-  const [importStatus, setImportStatus] = useState<'pending' | 'running' | 'completed'>('pending');
+  const [importStatus, setImportStatus] = useState<
+    'pending' | 'running' | 'completed'
+  >('pending');
   const [progress, setProgress] = useState(0);
 
   const handleStartImport = () => {
@@ -148,7 +156,7 @@ export default function ImportPage() {
             <p className="text-sm text-muted-foreground">Gesamtdatenmenge</p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-6 text-center">
             <Upload className="h-8 w-8 text-green-500 mx-auto mb-2" />
@@ -171,20 +179,26 @@ export default function ImportPage() {
         <CardHeader>
           <CardTitle>Import-Kategorien</CardTitle>
           <CardDescription>
-            Übersicht der zu übertragenden Bestandsdaten aus Ihrem bisherigen System
+            Übersicht der zu übertragenden Bestandsdaten aus Ihrem bisherigen
+            System
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {importCategories.map((category, index) => (
-              <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+              <div
+                key={index}
+                className="flex items-center justify-between p-4 border rounded-lg"
+              >
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center">
                     <category.icon className="h-6 w-6 text-gray-600" />
                   </div>
                   <div>
                     <div className="font-medium">{category.type}</div>
-                    <div className="text-sm text-muted-foreground">{category.description}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {category.description}
+                    </div>
                   </div>
                 </div>
                 <div className="text-right">
@@ -192,13 +206,19 @@ export default function ImportPage() {
                     {category.bereich}
                   </Badge>
                   <div className="text-sm text-muted-foreground mt-1">
-                    {category.umfang >= 1 ? `${category.umfang} MB` : `${category.umfang * 1000} KB`}
+                    {category.umfang >= 1
+                      ? `${category.umfang} MB`
+                      : `${category.umfang * 1000} KB`}
                   </div>
-                  {category.bereich.includes("WEG") && (
-                    <div className="text-xs text-green-600 mt-1">📖 Öffentliches Archiv</div>
+                  {category.bereich.includes('WEG') && (
+                    <div className="text-xs text-green-600 mt-1">
+                      📖 Öffentliches Archiv
+                    </div>
                   )}
-                  {category.bereich === "Hausverwaltung" && (
-                    <div className="text-xs text-amber-600 mt-1">🔒 Internes Archiv</div>
+                  {category.bereich === 'Hausverwaltung' && (
+                    <div className="text-xs text-amber-600 mt-1">
+                      🔒 Internes Archiv
+                    </div>
                   )}
                 </div>
               </div>
@@ -212,9 +232,12 @@ export default function ImportPage() {
         <CardHeader>
           <CardTitle>Import starten</CardTitle>
           <CardDescription>
-            {importStatus === 'pending' && "Bereit für die Datenübernahme aus Ihrem bisherigen System."}
-            {importStatus === 'running' && "Import läuft... Bitte warten Sie, bis alle Daten übertragen wurden."}
-            {importStatus === 'completed' && "Import erfolgreich abgeschlossen! Alle Bestandsdaten wurden übernommen."}
+            {importStatus === 'pending' &&
+              'Bereit für die Datenübernahme aus Ihrem bisherigen System.'}
+            {importStatus === 'running' &&
+              'Import läuft... Bitte warten Sie, bis alle Daten übertragen wurden.'}
+            {importStatus === 'completed' &&
+              'Import erfolgreich abgeschlossen! Alle Bestandsdaten wurden übernommen.'}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -224,12 +247,26 @@ export default function ImportPage() {
                 <div className="flex items-start gap-3">
                   <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5" />
                   <div>
-                    <h4 className="font-medium text-blue-900">Wichtige Hinweise</h4>
+                    <h4 className="font-medium text-blue-900">
+                      Wichtige Hinweise
+                    </h4>
                     <ul className="text-sm text-blue-800 mt-2 space-y-1">
-                      <li>• Stellen Sie sicher, dass alle Quelldaten verfügbar sind</li>
-                      <li>• Der Import kann je nach Datenmenge 30-60 Minuten dauern</li>
-                      <li>• Während des Imports sollten keine anderen Aktionen ausgeführt werden</li>
-                      <li>• Eine automatische Sicherung wird vor dem Import erstellt</li>
+                      <li>
+                        • Stellen Sie sicher, dass alle Quelldaten verfügbar
+                        sind
+                      </li>
+                      <li>
+                        • Der Import kann je nach Datenmenge 30-60 Minuten
+                        dauern
+                      </li>
+                      <li>
+                        • Während des Imports sollten keine anderen Aktionen
+                        ausgeführt werden
+                      </li>
+                      <li>
+                        • Eine automatische Sicherung wird vor dem Import
+                        erstellt
+                      </li>
                     </ul>
                   </div>
                 </div>
@@ -245,7 +282,9 @@ export default function ImportPage() {
             <div className="space-y-4">
               <Progress value={progress} className="w-full" />
               <div className="text-center text-sm text-muted-foreground">
-                {progress.toFixed(0)}% abgeschlossen - {(totalSize * progress / 100).toFixed(1)} MB von {totalSize.toFixed(1)} MB übertragen
+                {progress.toFixed(0)}% abgeschlossen -{' '}
+                {((totalSize * progress) / 100).toFixed(1)} MB von{' '}
+                {totalSize.toFixed(1)} MB übertragen
               </div>
             </div>
           )}
@@ -256,15 +295,16 @@ export default function ImportPage() {
                 <CheckCircle className="h-8 w-8 text-green-600" />
               </div>
               <div>
-                <h3 className="font-medium text-green-900">Import erfolgreich!</h3>
+                <h3 className="font-medium text-green-900">
+                  Import erfolgreich!
+                </h3>
                 <p className="text-sm text-green-800 mt-1">
-                  Alle {totalSize.toFixed(1)} MB Bestandsdaten wurden erfolgreich übernommen.
+                  Alle {totalSize.toFixed(1)} MB Bestandsdaten wurden
+                  erfolgreich übernommen.
                 </p>
               </div>
               <Button asChild>
-                <Link href="/admin">
-                  Zur Admin-Übersicht
-                </Link>
+                <Link href="/admin">Zur Admin-Übersicht</Link>
               </Button>
             </div>
           )}

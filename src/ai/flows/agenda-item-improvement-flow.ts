@@ -4,26 +4,40 @@
  * Nimmt Stichworte entgegen und erstellt professionelle WEG-konforme Formulierungen
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
 
 const AgendaItemImprovementInputSchema = z.object({
   title: z.string().describe('Der Titel/Stichwort für den Tagesordnungspunkt'),
-  description: z.string().describe('Grobe Beschreibung oder Stichworte zum Inhalt'),
-  meetingType: z.enum(['eigentümerversammlung', 'beiratssitzung', 'außerordentlich'])
+  description: z
+    .string()
+    .describe('Grobe Beschreibung oder Stichworte zum Inhalt'),
+  meetingType: z
+    .enum(['eigentümerversammlung', 'beiratssitzung', 'außerordentlich'])
     .optional()
     .default('eigentümerversammlung')
     .describe('Art der Versammlung'),
 });
-export type AgendaItemImprovementInput = z.infer<typeof AgendaItemImprovementInputSchema>;
+export type AgendaItemImprovementInput = z.infer<
+  typeof AgendaItemImprovementInputSchema
+>;
 
 const AgendaItemImprovementOutputSchema = z.object({
   improvedTitle: z.string().describe('Professionell formulierter Titel'),
-  improvedDescription: z.string().describe('Ausführliche, professionelle Beschreibung'),
-  legalNotes: z.string().optional().describe('Rechtliche Hinweise falls relevant'),
-  voteRequired: z.boolean().describe('Ob dieser Punkt eine Abstimmung erfordert'),
+  improvedDescription: z
+    .string()
+    .describe('Ausführliche, professionelle Beschreibung'),
+  legalNotes: z
+    .string()
+    .optional()
+    .describe('Rechtliche Hinweise falls relevant'),
+  voteRequired: z
+    .boolean()
+    .describe('Ob dieser Punkt eine Abstimmung erfordert'),
 });
-export type AgendaItemImprovementOutput = z.infer<typeof AgendaItemImprovementOutputSchema>;
+export type AgendaItemImprovementOutput = z.infer<
+  typeof AgendaItemImprovementOutputSchema
+>;
 
 const improveAgendaItemFlowRunner = ai.defineFlow(
   {
@@ -31,7 +45,7 @@ const improveAgendaItemFlowRunner = ai.defineFlow(
     inputSchema: AgendaItemImprovementInputSchema,
     outputSchema: AgendaItemImprovementOutputSchema,
   },
-  async ({title, description, meetingType}) => {
+  async ({ title, description, meetingType }) => {
     const prompt = `Du bist ein Experte für Wohnungseigentumsgesetz (WEG) und Eigentümerversammlungen. 
 
 Aufgabe: Formuliere den folgenden Tagesordnungspunkt professionell und rechtskonform für eine ${meetingType}.
@@ -54,7 +68,7 @@ Aufgabe: Formuliere den folgenden Tagesordnungspunkt professionell und rechtskon
 
 Erstelle eine professionelle Formulierung, die rechtssicher und verständlich ist.`;
 
-    const {text} = await ai.generate({
+    const { text } = await ai.generate({
       prompt: prompt,
       system: `Du bist ein WEG-Experte. Formuliere Tagesordnungspunkte rechtssicher und professionell. 
       

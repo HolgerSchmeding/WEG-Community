@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { Footer } from "@/components/footer";
-import { Header } from "@/components/header";
-import { Breadcrumbs } from "@/components/breadcrumbs";
+import { Footer } from '@/components/footer';
+import { Header } from '@/components/header';
+import { Breadcrumbs } from '@/components/breadcrumbs';
 
 export default function MainLayout({
   children,
@@ -14,9 +14,7 @@ export default function MainLayout({
       <Header />
       <Breadcrumbs />
       <main className="flex-1 bg-primary/5">
-        <div className="container mx-auto px-4 py-6">
-          {children}
-        </div>
+        <div className="container mx-auto px-4 py-6">{children}</div>
       </main>
       <Footer />
     </div>

@@ -1,9 +1,15 @@
-"use client";
+'use client';
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface Props {
@@ -40,7 +46,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('ErrorBoundary caught an error:', error, errorInfo);
-    
+
     this.setState({
       error,
       errorInfo,
@@ -71,6 +77,31 @@ export class ErrorBoundary extends Component<Props, State> {
     window.location.href = '/';
   };
 
+  // Hilfsmethode zur Erkennung von Firebase-Fehlern
+  private isFirebaseError(error: Error): boolean {
+    return (
+      error.message.includes('Firebase') ||
+      error.message.includes('Firestore') ||
+      error.message.includes('auth/') ||
+      error.message.includes('permission-denied') ||
+      error.message.includes('network-request-failed')
+    );
+  }
+
+  // Hilfsmethode für Firebase-spezifische Fehlermeldungen
+  private getFirebaseErrorMessage(error: Error): string {
+    if (error.message.includes('permission-denied')) {
+      return 'Sie haben keine Berechtigung für diese Aktion. Bitte melden Sie sich an.';
+    }
+    if (error.message.includes('network-request-failed')) {
+      return 'Netzwerkfehler: Bitte überprüfen Sie Ihre Internetverbindung.';
+    }
+    if (error.message.includes('auth/')) {
+      return 'Authentifizierungsfehler: Bitte melden Sie sich erneut an.';
+    }
+    return 'Datenbankfehler: Bitte versuchen Sie es später erneut.';
+  }
+
   public render() {
     if (this.state.hasError) {
       // Custom fallback UI wenn vorhanden
@@ -78,7 +109,10 @@ export class ErrorBoundary extends Component<Props, State> {
         return this.props.fallback;
       }
 
-      // Standard Fallback UI
+      // Standard Fallback UI mit Firebase-Unterstützung
+      const isFirebaseError =
+        this.state.error && this.isFirebaseError(this.state.error);
+
       return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
           <Card className="w-full max-w-2xl">
@@ -87,13 +121,17 @@ export class ErrorBoundary extends Component<Props, State> {
                 <AlertTriangle className="h-6 w-6 text-red-600" />
               </div>
               <CardTitle className="text-2xl font-bold text-gray-900">
-                Ups! Etwas ist schief gelaufen
+                {isFirebaseError
+                  ? 'Verbindungsproblem'
+                  : 'Ups! Etwas ist schief gelaufen'}
               </CardTitle>
               <CardDescription className="text-gray-600">
-                Es ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut.
+                {isFirebaseError && this.state.error
+                  ? this.getFirebaseErrorMessage(this.state.error)
+                  : 'Es ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut.'}
               </CardDescription>
             </CardHeader>
-            
+
             <CardContent className="space-y-4">
               {this.props.showErrorDetails && this.state.error && (
                 <Alert variant="destructive">
@@ -106,12 +144,12 @@ export class ErrorBoundary extends Component<Props, State> {
                       <div className="text-sm font-mono bg-gray-100 p-3 rounded border overflow-auto">
                         <p className="font-bold">Fehlermeldung:</p>
                         <p className="mb-2">{this.state.error.message}</p>
-                        
+
                         <p className="font-bold">Stack Trace:</p>
                         <pre className="text-xs whitespace-pre-wrap">
                           {this.state.error.stack}
                         </pre>
-                        
+
                         {this.state.errorInfo && (
                           <>
                             <p className="font-bold mt-2">Komponenten Stack:</p>
@@ -125,7 +163,7 @@ export class ErrorBoundary extends Component<Props, State> {
                   </AlertDescription>
                 </Alert>
               )}
-              
+
               <div className="flex flex-col sm:flex-row gap-3 pt-4">
                 <Button
                   onClick={this.handleReset}
@@ -135,7 +173,7 @@ export class ErrorBoundary extends Component<Props, State> {
                   <RefreshCw className="mr-2 h-4 w-4" />
                   Erneut versuchen
                 </Button>
-                
+
                 <Button
                   onClick={this.handleReload}
                   variant="outline"
@@ -144,7 +182,7 @@ export class ErrorBoundary extends Component<Props, State> {
                   <RefreshCw className="mr-2 h-4 w-4" />
                   Seite neu laden
                 </Button>
-                
+
                 <Button
                   onClick={this.handleGoHome}
                   variant="outline"
@@ -168,18 +206,18 @@ export class ErrorBoundary extends Component<Props, State> {
 export function useErrorHandler() {
   return (error: Error, errorInfo?: ErrorInfo) => {
     console.error('Error caught by useErrorHandler:', error, errorInfo);
-    
+
     // Hier könnte auch Error Reporting stattfinden
     // Beispiel: reportError(error, errorInfo);
   };
 }
 
 // Wrapper für spezifische Bereiche
-export function PageErrorBoundary({ 
-  children, 
-  pageName 
-}: { 
-  children: ReactNode; 
+export function PageErrorBoundary({
+  children,
+  pageName,
+}: {
+  children: ReactNode;
   pageName?: string;
 }) {
   const handleError = (error: Error, errorInfo: ErrorInfo) => {
@@ -187,7 +225,7 @@ export function PageErrorBoundary({
   };
 
   return (
-    <ErrorBoundary 
+    <ErrorBoundary
       onError={handleError}
       showErrorDetails={process.env.NODE_ENV === 'development'}
     >
@@ -197,10 +235,10 @@ export function PageErrorBoundary({
 }
 
 // Wrapper für Formulare
-export function FormErrorBoundary({ 
-  children, 
-  onError 
-}: { 
+export function FormErrorBoundary({
+  children,
+  onError,
+}: {
   children: ReactNode;
   onError?: (error: Error) => void;
 }) {
@@ -208,8 +246,8 @@ export function FormErrorBoundary({
     <Alert variant="destructive" className="my-4">
       <AlertTriangle className="h-4 w-4" />
       <AlertDescription>
-        Bei der Verarbeitung des Formulars ist ein Fehler aufgetreten. 
-        Bitte laden Sie die Seite neu und versuchen Sie es erneut.
+        Bei der Verarbeitung des Formulars ist ein Fehler aufgetreten. Bitte
+        laden Sie die Seite neu und versuchen Sie es erneut.
       </AlertDescription>
     </Alert>
   );
@@ -222,7 +260,7 @@ export function FormErrorBoundary({
   };
 
   return (
-    <ErrorBoundary 
+    <ErrorBoundary
       fallback={fallback}
       onError={handleError}
       showErrorDetails={false}

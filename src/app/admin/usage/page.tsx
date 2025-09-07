@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { 
+import * as React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import {
   Activity,
-  CreditCard, 
-  TrendingUp, 
+  CreditCard,
+  TrendingUp,
   AlertTriangle,
   CheckCircle,
-  Clock
-} from "lucide-react";
+  Clock,
+} from 'lucide-react';
 
 interface UsageData {
   currentMonth: {
@@ -77,7 +77,7 @@ export default function UsagePage() {
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[1, 2, 3].map((i) => (
+            {[1, 2, 3].map(i => (
               <Card key={i}>
                 <CardContent className="p-6">
                   <div className="animate-pulse">
@@ -104,7 +104,7 @@ export default function UsagePage() {
             Fehler beim Laden der Daten
           </h1>
           <p className="text-muted-foreground mb-4">{error}</p>
-          <button 
+          <button
             onClick={() => window.location.reload()}
             className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90"
           >
@@ -119,8 +119,11 @@ export default function UsagePage() {
     return null;
   }
 
-  const usagePercentage = (usageData.currentMonth.aiRequests / usageData.currentMonth.maxRequests) * 100;
-  const costPercentage = (usageData.currentMonth.cost / usageData.currentMonth.budget) * 100;
+  const usagePercentage =
+    (usageData.currentMonth.aiRequests / usageData.currentMonth.maxRequests) *
+    100;
+  const costPercentage =
+    (usageData.currentMonth.cost / usageData.currentMonth.budget) * 100;
 
   return (
     <div className="container py-8">
@@ -138,7 +141,9 @@ export default function UsagePage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">AI-Anfragen (Monat)</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                AI-Anfragen (Monat)
+              </CardTitle>
               <Activity className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -147,19 +152,24 @@ export default function UsagePage() {
               </div>
               <div className="flex items-center justify-between mt-2">
                 <Progress value={usagePercentage} className="flex-1 mr-2" />
-                <Badge variant={usagePercentage > 80 ? "destructive" : "secondary"}>
+                <Badge
+                  variant={usagePercentage > 80 ? 'destructive' : 'secondary'}
+                >
                   {usagePercentage.toFixed(1)}%
                 </Badge>
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                von {usageData.currentMonth.maxRequests.toLocaleString()} verfügbar
+                von {usageData.currentMonth.maxRequests.toLocaleString()}{' '}
+                verfügbar
               </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Kosten (Monat)</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Kosten (Monat)
+              </CardTitle>
               <CreditCard className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -168,7 +178,9 @@ export default function UsagePage() {
               </div>
               <div className="flex items-center justify-between mt-2">
                 <Progress value={costPercentage} className="flex-1 mr-2" />
-                <Badge variant={costPercentage > 80 ? "destructive" : "secondary"}>
+                <Badge
+                  variant={costPercentage > 80 ? 'destructive' : 'secondary'}
+                >
                   {costPercentage.toFixed(1)}%
                 </Badge>
               </div>
@@ -184,9 +196,7 @@ export default function UsagePage() {
               <CheckCircle className="h-4 w-4 text-green-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">
-                Aktiv
-              </div>
+              <div className="text-2xl font-bold text-green-600">Aktiv</div>
               <p className="text-xs text-muted-foreground mt-1">
                 Alle Services verfügbar
               </p>
@@ -206,7 +216,10 @@ export default function UsagePage() {
           <CardContent>
             <div className="space-y-4">
               {usageData.breakdown.map((service, index) => (
-                <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-4 border rounded-lg"
+                >
                   <div className="flex-1">
                     <h3 className="font-medium">{service.service}</h3>
                     <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
@@ -215,9 +228,12 @@ export default function UsagePage() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="font-medium">{service.cost.toFixed(2)}€</div>
+                    <div className="font-medium">
+                      {service.cost.toFixed(2)}€
+                    </div>
                     <div className="text-sm text-muted-foreground">
-                      {(service.cost / service.requests * 100).toFixed(1)}¢ pro Anfrage
+                      {((service.cost / service.requests) * 100).toFixed(1)}¢
+                      pro Anfrage
                     </div>
                   </div>
                 </div>
@@ -235,11 +251,16 @@ export default function UsagePage() {
             <div className="flex items-end space-x-2 h-32">
               {usageData.dailyUsage.map((day, index) => (
                 <div key={index} className="flex-1 flex flex-col items-center">
-                  <div 
+                  <div
                     className="bg-primary rounded w-full"
-                    style={{ height: `${(day.requests / 60) * 100}%`, minHeight: '4px' }}
+                    style={{
+                      height: `${(day.requests / 60) * 100}%`,
+                      minHeight: '4px',
+                    }}
                   />
-                  <span className="text-xs text-muted-foreground mt-2">{day.day}</span>
+                  <span className="text-xs text-muted-foreground mt-2">
+                    {day.day}
+                  </span>
                   <span className="text-xs font-medium">{day.requests}</span>
                 </div>
               ))}

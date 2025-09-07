@@ -1,5 +1,5 @@
-import {genkit} from 'genkit';
-import {googleAI} from '@genkit-ai/googleai';
+import { genkit } from 'genkit';
+import { googleAI } from '@genkit-ai/googleai';
 
 // This file is now ONLY for initializing and exporting the ai object.
 // Flow imports have been moved to the entry points (API route and dev server)

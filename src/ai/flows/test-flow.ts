@@ -1,4 +1,3 @@
-
 'use server';
 
 /**
@@ -9,8 +8,8 @@
  * - TestEchoOutput - The return type for the testEchoFlow function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
 
 const TestEchoInputSchema = z.object({
   message: z.string().describe('The message to be echoed.'),
@@ -21,7 +20,6 @@ const TestEchoOutputSchema = z.object({
   echoed: z.string().describe('The echoed message.'),
 });
 export type TestEchoOutput = z.infer<typeof TestEchoOutputSchema>;
-
 
 const testEchoFlowRunner = ai.defineFlow(
   {
@@ -34,6 +32,8 @@ const testEchoFlowRunner = ai.defineFlow(
   }
 );
 
-export async function testEchoFlow(input: TestEchoInput): Promise<TestEchoOutput> {
+export async function testEchoFlow(
+  input: TestEchoInput
+): Promise<TestEchoOutput> {
   return testEchoFlowRunner(input);
 }

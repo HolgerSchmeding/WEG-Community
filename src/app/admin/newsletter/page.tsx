@@ -1,15 +1,35 @@
-"use client";
+'use client';
 
 import * as React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, Send, Sparkles, FileText, Users, Calendar, AlertTriangle, PartyPopper, Wrench, Euro, Copy, Eye, Download } from "lucide-react";
+import {
+  ArrowLeft,
+  Send,
+  Sparkles,
+  FileText,
+  Users,
+  Calendar,
+  AlertTriangle,
+  PartyPopper,
+  Wrench,
+  Euro,
+  Copy,
+  Eye,
+  Download,
+} from 'lucide-react';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
 
@@ -40,8 +60,8 @@ Bei Fragen oder Anregungen stehen wir Ihnen gerne zur Verfügung.
 
 Mit freundlichen Grüßen
 {{HAUSVERWALTUNG_NAME}}
-{{KONTAKT_INFO}}`
-    }
+{{KONTAKT_INFO}}`,
+    },
   },
   {
     id: 'maintenance',
@@ -69,8 +89,8 @@ hiermit informieren wir Sie über geplante Wartungsarbeiten in unserer Wohnanlag
 Wir bitten um Ihr Verständnis für die entstehenden Unannehmlichkeiten.
 
 Mit freundlichen Grüßen
-{{HAUSVERWALTUNG_NAME}}`
-    }
+{{HAUSVERWALTUNG_NAME}}`,
+    },
   },
   {
     id: 'event',
@@ -98,8 +118,8 @@ wir laden Sie herzlich zu unserem {{EVENT_NAME}} ein!
 Wir freuen uns auf Ihr Kommen und ein gemütliches Beisammensein!
 
 Mit freundlichen Grüßen
-{{WEG_VERWALTUNGSBEIRAT}}`
-    }
+{{WEG_VERWALTUNGSBEIRAT}}`,
+    },
   },
   {
     id: 'financial',
@@ -128,29 +148,62 @@ hiermit informieren wir Sie über die aktuellen finanziellen Angelegenheiten uns
 Bei Fragen zur Abrechnung wenden Sie sich bitte an uns.
 
 Mit freundlichen Grüßen
-{{HAUSVERWALTUNG_NAME}}`
-    }
-  }
+{{HAUSVERWALTUNG_NAME}}`,
+    },
+  },
 ];
 
 // KI Keywords für verschiedene Kategorien
 const aiKeywordCategories = [
   {
     category: 'Wartung & Reparaturen',
-    keywords: ['Heizung', 'Aufzug', 'Dach', 'Fassade', 'Garten', 'Reinigung', 'Elektrik', 'Sanitär', 'Fenster', 'Türen']
+    keywords: [
+      'Heizung',
+      'Aufzug',
+      'Dach',
+      'Fassade',
+      'Garten',
+      'Reinigung',
+      'Elektrik',
+      'Sanitär',
+      'Fenster',
+      'Türen',
+    ],
   },
   {
     category: 'Gemeinschaft & Events',
-    keywords: ['Sommerfest', 'Nachbarschaftstreffen', 'Grillabend', 'Weihnachtsfeier', 'Frühjahrsputz', 'Gartenpflege']
+    keywords: [
+      'Sommerfest',
+      'Nachbarschaftstreffen',
+      'Grillabend',
+      'Weihnachtsfeier',
+      'Frühjahrsputz',
+      'Gartenpflege',
+    ],
   },
   {
     category: 'Verwaltung & Termine',
-    keywords: ['Eigentümerversammlung', 'Beiratssitzung', 'Hausordnung', 'Parkplätze', 'Müllentsorgung', 'Winterdienst']
+    keywords: [
+      'Eigentümerversammlung',
+      'Beiratssitzung',
+      'Hausordnung',
+      'Parkplätze',
+      'Müllentsorgung',
+      'Winterdienst',
+    ],
   },
   {
     category: 'Kosten & Finanzen',
-    keywords: ['Hausgeld', 'Nebenkosten', 'Rücklage', 'Sanierung', 'Modernisierung', 'Versicherung', 'Steuern']
-  }
+    keywords: [
+      'Hausgeld',
+      'Nebenkosten',
+      'Rücklage',
+      'Sanierung',
+      'Modernisierung',
+      'Versicherung',
+      'Steuern',
+    ],
+  },
 ];
 
 export default function NewsletterPage() {
@@ -172,8 +225,8 @@ export default function NewsletterPage() {
   };
 
   const handleKeywordToggle = (keyword: string) => {
-    setSelectedKeywords(prev => 
-      prev.includes(keyword) 
+    setSelectedKeywords(prev =>
+      prev.includes(keyword)
         ? prev.filter(k => k !== keyword)
         : [...prev, keyword]
     );
@@ -183,11 +236,12 @@ export default function NewsletterPage() {
     if (!aiPrompt.trim() && selectedKeywords.length === 0) return;
 
     setIsGenerating(true);
-    
+
     // Simulierte KI-Generierung (in der Realität würde hier ein API-Call stattfinden)
     const keywords = selectedKeywords.join(', ');
-    const prompt = aiPrompt || `Newsletter-Text erstellen mit den Themen: ${keywords}`;
-    
+    const prompt =
+      aiPrompt || `Newsletter-Text erstellen mit den Themen: ${keywords}`;
+
     setTimeout(() => {
       const aiGeneratedContent = `Liebe Bewohnerinnen und Bewohner,
 
@@ -222,26 +276,27 @@ Immobilien- u. Vermögensverwaltung GmbH`;
       <div className="flex justify-between items-center mb-8">
         <Button variant="ghost" asChild>
           <Link href="/admin">
-             <ArrowLeft className="mr-2 h-4 w-4" />
-             Zurück zur Admin-Übersicht
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Zurück zur Admin-Übersicht
           </Link>
         </Button>
         <Badge variant="outline" className="text-base py-2 px-4 border-2">
-            <Send className="mr-2 h-5 w-5" />
-            Newsletter-Center
+          <Send className="mr-2 h-5 w-5" />
+          Newsletter-Center
         </Badge>
       </div>
 
       {/* Header */}
       <div className="text-center max-w-2xl mx-auto mb-8">
         <div className="inline-block bg-sky-100 p-3 rounded-lg mb-4">
-            <Send className="h-8 w-8 text-sky-600" />
+          <Send className="h-8 w-8 text-sky-600" />
         </div>
         <h1 className="font-headline text-4xl md:text-5xl font-bold tracking-tight">
-            Newsletter & Rundschreiben
+          Newsletter & Rundschreiben
         </h1>
         <p className="mt-4 text-lg text-muted-foreground">
-            Professionelle Kommunikation mit allen Bewohnern - Templates verwenden oder KI-gestützt erstellen.
+          Professionelle Kommunikation mit allen Bewohnern - Templates verwenden
+          oder KI-gestützt erstellen.
         </p>
       </div>
 
@@ -270,7 +325,7 @@ Immobilien- u. Vermögensverwaltung GmbH`;
                       <Input
                         id="subject"
                         value={newsletterSubject}
-                        onChange={(e) => setNewsletterSubject(e.target.value)}
+                        onChange={e => setNewsletterSubject(e.target.value)}
                         placeholder="Newsletter Betreff eingeben..."
                       />
                     </div>
@@ -279,7 +334,7 @@ Immobilien- u. Vermögensverwaltung GmbH`;
                       <Textarea
                         id="content"
                         value={newsletterContent}
-                        onChange={(e) => setNewsletterContent(e.target.value)}
+                        onChange={e => setNewsletterContent(e.target.value)}
                         placeholder="Newsletter-Inhalt eingeben oder Template auswählen..."
                         rows={12}
                       />
@@ -289,7 +344,10 @@ Immobilien- u. Vermögensverwaltung GmbH`;
                         <Copy className="mr-2 h-4 w-4" />
                         Kopieren
                       </Button>
-                      <Button onClick={() => setPreviewMode(!previewMode)} variant="outline">
+                      <Button
+                        onClick={() => setPreviewMode(!previewMode)}
+                        variant="outline"
+                      >
                         <Eye className="mr-2 h-4 w-4" />
                         {previewMode ? 'Editor' : 'Vorschau'}
                       </Button>
@@ -309,10 +367,18 @@ Immobilien- u. Vermögensverwaltung GmbH`;
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="all">Alle Bewohner (128 Einheiten)</SelectItem>
-                          <SelectItem value="owners">Nur Eigentümer (87 Personen)</SelectItem>
-                          <SelectItem value="tenants">Nur Mieter (41 Personen)</SelectItem>
-                          <SelectItem value="board">Nur Verwaltungsbeirat (7 Personen)</SelectItem>
+                          <SelectItem value="all">
+                            Alle Bewohner (128 Einheiten)
+                          </SelectItem>
+                          <SelectItem value="owners">
+                            Nur Eigentümer (87 Personen)
+                          </SelectItem>
+                          <SelectItem value="tenants">
+                            Nur Mieter (41 Personen)
+                          </SelectItem>
+                          <SelectItem value="board">
+                            Nur Verwaltungsbeirat (7 Personen)
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -324,7 +390,9 @@ Immobilien- u. Vermögensverwaltung GmbH`;
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="now">Sofort versenden</SelectItem>
-                          <SelectItem value="schedule">Geplanter Versand</SelectItem>
+                          <SelectItem value="schedule">
+                            Geplanter Versand
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -345,12 +413,19 @@ Immobilien- u. Vermögensverwaltung GmbH`;
                     <CardContent>
                       <div className="bg-white border rounded-lg p-6 space-y-4">
                         <div className="border-b pb-2">
-                          <div className="text-sm text-muted-foreground">Von: hausverwaltung@eiswirth.de</div>
-                          <div className="text-sm text-muted-foreground">An: alle-bewohner@weg-community.de</div>
-                          <div className="font-semibold">{newsletterSubject || 'Newsletter Betreff'}</div>
+                          <div className="text-sm text-muted-foreground">
+                            Von: hausverwaltung@eiswirth.de
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            An: alle-bewohner@weg-community.de
+                          </div>
+                          <div className="font-semibold">
+                            {newsletterSubject || 'Newsletter Betreff'}
+                          </div>
                         </div>
                         <div className="whitespace-pre-wrap text-sm">
-                          {newsletterContent || 'Newsletter-Inhalt wird hier angezeigt...'}
+                          {newsletterContent ||
+                            'Newsletter-Inhalt wird hier angezeigt...'}
                         </div>
                       </div>
                     </CardContent>
@@ -362,19 +437,25 @@ Immobilien- u. Vermögensverwaltung GmbH`;
                     </CardHeader>
                     <CardContent>
                       <div className="grid grid-cols-1 gap-3">
-                        {newsletterTemplates.map((template) => (
+                        {newsletterTemplates.map(template => (
                           <div
                             key={template.id}
                             className={`p-3 rounded-lg border cursor-pointer hover:bg-muted/50 transition-colors ${
-                              selectedTemplate === template.id ? 'border-primary bg-primary/5' : 'border-border'
+                              selectedTemplate === template.id
+                                ? 'border-primary bg-primary/5'
+                                : 'border-border'
                             }`}
                             onClick={() => handleTemplateSelect(template.id)}
                           >
                             <div className="flex items-start gap-3">
                               <template.icon className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
                               <div className="flex-1">
-                                <div className="font-medium">{template.title}</div>
-                                <div className="text-sm text-muted-foreground">{template.description}</div>
+                                <div className="font-medium">
+                                  {template.title}
+                                </div>
+                                <div className="text-sm text-muted-foreground">
+                                  {template.description}
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -391,15 +472,33 @@ Immobilien- u. Vermögensverwaltung GmbH`;
                   <CardContent>
                     <div className="space-y-3">
                       {[
-                        { subject: 'Monatliche Informationen - August 2025', date: '5. August 2025', recipients: 128 },
-                        { subject: 'Heizungsmodernisierung - Terminankündigung', date: '28. Juli 2025', recipients: 87 },
-                        { subject: 'Einladung zum Sommerfest 2025', date: '15. Juli 2025', recipients: 128 }
+                        {
+                          subject: 'Monatliche Informationen - August 2025',
+                          date: '5. August 2025',
+                          recipients: 128,
+                        },
+                        {
+                          subject: 'Heizungsmodernisierung - Terminankündigung',
+                          date: '28. Juli 2025',
+                          recipients: 87,
+                        },
+                        {
+                          subject: 'Einladung zum Sommerfest 2025',
+                          date: '15. Juli 2025',
+                          recipients: 128,
+                        },
                       ].map((newsletter, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 bg-muted/50 rounded">
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-3 bg-muted/50 rounded"
+                        >
                           <div className="flex-1">
-                            <div className="font-medium text-sm">{newsletter.subject}</div>
+                            <div className="font-medium text-sm">
+                              {newsletter.subject}
+                            </div>
                             <div className="text-xs text-muted-foreground">
-                              {newsletter.date} • {newsletter.recipients} Empfänger
+                              {newsletter.date} • {newsletter.recipients}{' '}
+                              Empfänger
                             </div>
                           </div>
                           <Button variant="ghost" size="sm">
@@ -417,35 +516,50 @@ Immobilien- u. Vermögensverwaltung GmbH`;
           {/* Templates */}
           <TabsContent value="templates">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {newsletterTemplates.map((template) => (
-                <Card key={template.id} className="hover:shadow-md transition-shadow">
+              {newsletterTemplates.map(template => (
+                <Card
+                  key={template.id}
+                  className="hover:shadow-md transition-shadow"
+                >
                   <CardHeader>
                     <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${template.color.replace('text-', 'bg-').split(' ')[0]}`}>
-                        <template.icon className={`h-5 w-5 ${template.color.split(' ')[1]}`} />
+                      <div
+                        className={`p-2 rounded-lg ${template.color.replace('text-', 'bg-').split(' ')[0]}`}
+                      >
+                        <template.icon
+                          className={`h-5 w-5 ${template.color.split(' ')[1]}`}
+                        />
                       </div>
                       <div className="flex-1">
-                        <CardTitle className="text-lg">{template.title}</CardTitle>
-                        <div className="text-sm text-muted-foreground">{template.description}</div>
+                        <CardTitle className="text-lg">
+                          {template.title}
+                        </CardTitle>
+                        <div className="text-sm text-muted-foreground">
+                          {template.description}
+                        </div>
                       </div>
                     </div>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
                       <div>
-                        <Label className="text-xs font-semibold">BETREFF-VORLAGE:</Label>
+                        <Label className="text-xs font-semibold">
+                          BETREFF-VORLAGE:
+                        </Label>
                         <div className="text-sm bg-muted p-2 rounded font-mono">
                           {template.template.subject}
                         </div>
                       </div>
                       <div>
-                        <Label className="text-xs font-semibold">CONTENT-VORLAGE:</Label>
+                        <Label className="text-xs font-semibold">
+                          CONTENT-VORLAGE:
+                        </Label>
                         <div className="text-sm bg-muted p-2 rounded max-h-32 overflow-y-auto whitespace-pre-wrap font-mono">
                           {template.template.content.substring(0, 200)}...
                         </div>
                       </div>
-                      <Button 
-                        onClick={() => handleTemplateSelect(template.id)} 
+                      <Button
+                        onClick={() => handleTemplateSelect(template.id)}
                         className="w-full"
                         variant="outline"
                       >
@@ -471,29 +585,37 @@ Immobilien- u. Vermögensverwaltung GmbH`;
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
-                      <Label htmlFor="ai-prompt">Beschreibung / Stichworte</Label>
+                      <Label htmlFor="ai-prompt">
+                        Beschreibung / Stichworte
+                      </Label>
                       <Textarea
                         id="ai-prompt"
                         value={aiPrompt}
-                        onChange={(e) => setAiPrompt(e.target.value)}
+                        onChange={e => setAiPrompt(e.target.value)}
                         placeholder="Beschreiben Sie, worum es in dem Newsletter gehen soll... z.B. 'Newsletter über geplante Heizungsmodernisierung im Herbst, Sommerfest und neue Hausordnung'"
                         rows={4}
                       />
                     </div>
-                    
+
                     <Separator />
-                    
+
                     <div>
                       <Label>Themen-Kategorien auswählen</Label>
                       <div className="space-y-4 mt-2">
-                        {aiKeywordCategories.map((category) => (
+                        {aiKeywordCategories.map(category => (
                           <div key={category.category}>
-                            <div className="text-sm font-medium mb-2">{category.category}</div>
+                            <div className="text-sm font-medium mb-2">
+                              {category.category}
+                            </div>
                             <div className="flex flex-wrap gap-2">
-                              {category.keywords.map((keyword) => (
+                              {category.keywords.map(keyword => (
                                 <Badge
                                   key={keyword}
-                                  variant={selectedKeywords.includes(keyword) ? "default" : "outline"}
+                                  variant={
+                                    selectedKeywords.includes(keyword)
+                                      ? 'default'
+                                      : 'outline'
+                                  }
                                   className="cursor-pointer hover:bg-primary/20"
                                   onClick={() => handleKeywordToggle(keyword)}
                                 >
@@ -506,8 +628,8 @@ Immobilien- u. Vermögensverwaltung GmbH`;
                       </div>
                     </div>
 
-                    <Button 
-                      onClick={generateAIContent} 
+                    <Button
+                      onClick={generateAIContent}
                       className="w-full"
                       disabled={isGenerating}
                       size="lg"
@@ -536,7 +658,7 @@ Immobilien- u. Vermögensverwaltung GmbH`;
                   <CardContent>
                     {selectedKeywords.length > 0 ? (
                       <div className="flex flex-wrap gap-2">
-                        {selectedKeywords.map((keyword) => (
+                        {selectedKeywords.map(keyword => (
                           <Badge key={keyword} variant="secondary">
                             {keyword}
                           </Badge>
@@ -544,7 +666,8 @@ Immobilien- u. Vermögensverwaltung GmbH`;
                       </div>
                     ) : (
                       <div className="text-muted-foreground text-sm">
-                        Wählen Sie Themen-Stichworte aus oder geben Sie eine eigene Beschreibung ein.
+                        Wählen Sie Themen-Stichworte aus oder geben Sie eine
+                        eigene Beschreibung ein.
                       </div>
                     )}
                   </CardContent>
@@ -559,19 +682,22 @@ Immobilien- u. Vermögensverwaltung GmbH`;
                       <div className="flex items-start gap-2">
                         <AlertTriangle className="h-4 w-4 text-amber-500 flex-shrink-0 mt-0.5" />
                         <div>
-                          <strong>Klare Struktur:</strong> Verwenden Sie Überschriften und Aufzählungen für bessere Lesbarkeit.
+                          <strong>Klare Struktur:</strong> Verwenden Sie
+                          Überschriften und Aufzählungen für bessere Lesbarkeit.
                         </div>
                       </div>
                       <div className="flex items-start gap-2">
                         <Users className="h-4 w-4 text-blue-500 flex-shrink-0 mt-0.5" />
                         <div>
-                          <strong>Zielgruppe:</strong> Wählen Sie die passende Ansprache für Ihre Bewohner.
+                          <strong>Zielgruppe:</strong> Wählen Sie die passende
+                          Ansprache für Ihre Bewohner.
                         </div>
                       </div>
                       <div className="flex items-start gap-2">
                         <Calendar className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
                         <div>
-                          <strong>Termine:</strong> Fügen Sie immer konkrete Daten und Uhrzeiten hinzu.
+                          <strong>Termine:</strong> Fügen Sie immer konkrete
+                          Daten und Uhrzeiten hinzu.
                         </div>
                       </div>
                     </div>
