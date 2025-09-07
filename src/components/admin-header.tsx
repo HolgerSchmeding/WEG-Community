@@ -11,7 +11,7 @@ export function AdminHeader() {
           <Logo className="h-6 w-6" />
           <div className="h-6 w-px bg-border" />
           <span className="font-bold sm:inline-block font-headline text-muted-foreground">
-            Adminbereich
+            Hausverwalter
           </span>
         </div>
         <Button asChild variant="outline" size="sm">
