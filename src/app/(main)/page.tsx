@@ -18,6 +18,7 @@ import {
   Info,
 } from 'lucide-react';
 import { BackButton } from '@/components/back-button';
+import ClientRef from '@/components/_client-ref';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { de } from 'date-fns/locale';
@@ -129,6 +130,7 @@ export default function DashboardPage() {
 
   return (
     <div className="container py-8">
+      <ClientRef />
       <BackButton text="Zurück zur Übersicht" />
 
       <div className="text-center max-w-2xl mx-auto my-8">
