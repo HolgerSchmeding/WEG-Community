@@ -68,7 +68,9 @@ export function DocumentSummarizer({
     try {
       // Simulate summary generation
       setTimeout(() => {
-        setSummary(`Zusammenfassung des Dokuments:\n\nDies ist eine simulierte Zusammenfassung des eingereichten Dokuments. In einer vollständigen Implementierung würde hier die KI-basierte Zusammenfassung erscheinen.`);
+        setSummary(
+          `Zusammenfassung des Dokuments:\n\nDies ist eine simulierte Zusammenfassung des eingereichten Dokuments. In einer vollständigen Implementierung würde hier die KI-basierte Zusammenfassung erscheinen.`
+        );
         setLoading(false);
         toast({
           title: 'Zusammenfassung erstellt!',

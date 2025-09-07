@@ -71,13 +71,15 @@ export function Footer() {
                 </Link>
               </li>
             </ul>
-            
+
             {/* Trennlinie */}
             <div className="border-t border-gray-300 my-4"></div>
-            
+
             {/* Demo-Zugang für Hausverwaltung */}
             <div className="mt-6">
-              <h4 className="font-medium text-sm text-gray-500 mb-2">Demo-Zugang</h4>
+              <h4 className="font-medium text-sm text-gray-500 mb-2">
+                Demo-Zugang
+              </h4>
               <Link
                 href="/admin"
                 className="flex items-center gap-2 text-orange-600 hover:text-orange-700 transition-colors text-sm"

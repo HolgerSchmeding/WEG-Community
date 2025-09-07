@@ -29,12 +29,13 @@ Migration von Firebase Hosting zu Vercel zur Behebung des "clientModules undefin
 **Lösung**: Client-Reference-Shim implementiert:
 
 1. **Erstellt**: `src/components/_client-ref.tsx`
+
    ```tsx
-   "use client"
-   import { useState } from 'react'
+   'use client';
+   import { useState } from 'react';
    export default function ClientRef() {
-     const [_] = useState(null)
-     return null
+     const [_] = useState(null);
+     return null;
    }
    ```
 

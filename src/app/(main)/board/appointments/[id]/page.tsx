@@ -111,7 +111,7 @@ export default function AppointmentFormPage() {
         const appointment = mockAppointments.find(a => a.id === id);
         if (appointment) {
           form.reset({
-            status: appointment.status as "Entwurf" | "Anstehend",
+            status: appointment.status as 'Entwurf' | 'Anstehend',
             title: appointment.title,
             date: appointment.date,
             description: appointment.description,

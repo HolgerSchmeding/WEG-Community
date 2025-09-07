@@ -1,18 +1,18 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
 
 export default function ClientRef() {
-  const [mounted, setMounted] = useState(false)
-  
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
-    setMounted(true)
-  }, [])
-  
+    setMounted(true);
+  }, []);
+
   // Force client-side hydration
   if (typeof window !== 'undefined') {
-    return null
+    return null;
   }
-  
-  return null
+
+  return null;
 }
