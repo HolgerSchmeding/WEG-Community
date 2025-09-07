@@ -15,8 +15,6 @@ const nextConfig: NextConfig = {
     // optimizeCss: true, // Disabled due to build issues
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
   },
-  // Fix for Vercel deployment client reference manifest issue
-  output: 'standalone',
   images: {
     remotePatterns: [
       {
