@@ -4,11 +4,6 @@
   "installCommand": "npm ci",
   "framework": "nextjs",
   "regions": ["fra1"],
-  "functions": {
-    "app/**": {
-      "runtime": "nodejs20.x"
-    }
-  },
   "headers": [
     {
       "source": "/api/(.*)",
