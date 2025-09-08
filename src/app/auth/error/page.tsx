@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/card';
 import { AlertCircle, ArrowLeft, RefreshCw } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
 const errorMessages: Record<string, string> = {
   Configuration: 'Es gibt ein Problem mit der Server-Konfiguration.',
@@ -18,7 +19,7 @@ const errorMessages: Record<string, string> = {
   Default: 'Ein unerwarteter Fehler ist aufgetreten.',
 };
 
-export default function AuthErrorPage() {
+function AuthErrorContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const error = searchParams.get('error') || 'Default';
@@ -76,5 +77,13 @@ export default function AuthErrorPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function AuthErrorPage() {
+  return (
+    <Suspense fallback={<div>Laden...</div>}>
+      <AuthErrorContent />
+    </Suspense>
   );
 }

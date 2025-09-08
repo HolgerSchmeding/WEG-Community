@@ -6,7 +6,6 @@ import { cn } from '@/lib/utils';
 import { TicketProvider } from '@/hooks/use-tickets';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { AuthProvider } from '@/components/providers/auth-provider';
-import { getSession } from '@/lib/auth';
 
 const fontInter = Inter({
   subsets: ['latin'],
@@ -23,13 +22,11 @@ export const metadata: Metadata = {
   description: 'Zentrale Plattform für die WEG Silberbach',
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getSession();
-
   return (
     <html lang="de" suppressHydrationWarning>
       <body
@@ -42,7 +39,7 @@ export default async function RootLayout({
         <ErrorBoundary
           showErrorDetails={process.env.NODE_ENV === 'development'}
         >
-          <AuthProvider session={session}>
+          <AuthProvider session={null}>
             <TicketProvider>{children}</TicketProvider>
           </AuthProvider>
           <Toaster />

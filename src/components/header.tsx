@@ -16,10 +16,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 export function Header() {
-  const { user, isAuthenticated, isLoading } = useNextAuth();
+  // Temporäre Lösung: Einfacher Header ohne Auth für Vercel Deployment
+  const user = null;
+  const isAuthenticated = false;
+  const isLoading = false;
 
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: '/auth/signin' });
+    // Placeholder for signout
   };
 
   if (isLoading) {
@@ -80,7 +83,7 @@ export function Header() {
             <Button
               variant="ghost"
               className="relative h-8 w-8 rounded-full"
-              aria-label={`Benutzermenü für ${user?.name || 'Benutzer'}`}
+              aria-label="Benutzermenü"
             >
               <User className="h-4 w-4" aria-hidden="true" />
             </Button>
@@ -89,10 +92,10 @@ export function Header() {
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none">
-                  {user?.name || 'Benutzer'}
+                  Demo Benutzer
                 </p>
                 <p className="text-xs leading-none text-muted-foreground">
-                  {user?.email || 'benutzer@email.com'}
+                  demo@example.com
                 </p>
               </div>
             </DropdownMenuLabel>
